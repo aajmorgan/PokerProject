@@ -1,10 +1,10 @@
-def findProb(cards, ranks):
+def findProb(cards, cardSet ranks):
     if "fourKind" in ranks:
         return 1
     else:
         if "pair" not in ranks:
             return 0
-        diffRanks = len(set(cards))
+        diffRanks = len(cardSet)
         if len(cards) == 5:
             if "threeKind" not in ranks:
                 # Ex 22 33 4, or 22 3 4 5
