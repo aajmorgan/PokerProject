@@ -1,4 +1,4 @@
-def findProb(cards, cardSet ranks):
+def findProb(cards, cardSet, ranks):
     if "fourKind" in ranks:
         return 1
     else:
