@@ -1,5 +1,4 @@
-import probs
-
+from probs import probSwitch
 
 def findProbabilities(choice, cards):
     nums = []
@@ -10,24 +9,7 @@ def findProbabilities(choice, cards):
     suitSet = set(suits)
     numSet = set(nums)
     ranks = check_ranks(nums, numSet, suits, suitSet)
-    # Issue. Maybe should switch back to if, elifs because otherwise it does every calculation all the time,
-    # but that could be good, cause then when you wanna see one it already has the number ready.
-    # Unless it doesn't do function until you do switch.get(x)?
-
-    #with suitSet and numSet, each function of these is gonna need them
-    #so might as well give them all it once and not have all of them do it
-    switch = {
-        1: probs.findPairProb.findProb(nums, ranks),
-        2: probs.findTwoPairProb.findProb(nums, numSet, ranks),
-        3: probs.findThreeKindProb.findProb(nums, numSet, ranks),
-        4: probs.findStraightProb.findProb(cards, ranks),
-        5: probs.findFlushProb.findProb(cards, ranks),
-        6: probs.findFullHouseProb.findProb(numSet, ranks), #could this just be findTwoPair * findThreeKind?
-        7: probs.findFourKindProb.findProb(nums, numSet, ranks),
-        8: probs.findStraightFlushProb.findProb(cards, ranks),
-        9: probs.findRoyalFlushProb.findProb(cards, ranks)
-    }
-    return switch.get(choice, "Invalid Choice")
+    probSwitch.probSwitcher(choice, nums, numSet, suits, suitSet, ranks, cards)
 
 
 def check_ranks(nums, numSet, suits, suitSet):
