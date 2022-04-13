@@ -1,7 +1,7 @@
 import deck_of_cards
 
 
-def findProb(cards, ranks):
+def findProb(nums, numSet, ranks):
     if "twoPair" in ranks:
         return 1
     else:

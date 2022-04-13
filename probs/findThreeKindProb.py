@@ -25,10 +25,7 @@ def calculate(cards, count):
     elif count == 2:
         total = (2 * cards_to_be_flipped)/(DECKLENGTH - len(cards))
     return total
-
-    '''
-    could also be adding = 2/(DECKLENGTH - len(cards)) * cards_to_be_flipped, then total *= adding
-    '''
+    #  could also be adding = 2/(DECKLENGTH - len(cards)) * cards_to_be_flipped, then total *= adding
 
     # P(three of a kind | one card) = P(one card | three of a kind) * P(three of a kind)
     #                                   -----------------------------------------------
@@ -41,21 +38,15 @@ def calculate(cards, count):
     '''
     (6 choose 1) * 1/46
     (5 choose 1) * 1/47 + (1/47 * 1/46)
-
     (5 choose 1) * (1/47 * 1/46)
-
             (5)
             (1)                          1
             ----            *           ---
     len(deck) - len(cards)    len(deck) - len(cards) - 1
-
     RIVERMAX = 7
-
-
     total = binom(len(cards), 1)
     for i in range(RIVERMAX - len(cards)):
         total /= (len(deck) - len(cards) - i)
-
 testing below
 nums = [1, 4, 5, 2, 6]
 numSet = set(nums)
