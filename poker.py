@@ -39,12 +39,11 @@ def checkQuitPygame():
 
 
 class Poker:
-    def __init__(self):
+    def __init__(self, surface):
         self.deck = set_deck()
         self.hand = [self.deck.give_first_card(), self.deck.give_first_card()]
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
-
-        self.surface = pygame.display.set_mode((1000, 1000))
+        self.surface = surface
         self.surface.fill(0x35654D)
         pygame.display.update()
 
@@ -138,11 +137,13 @@ class Poker:
 
 def main():
     pygame.init()
+    surface = pygame.display.set_mode((1000, 1000))
+    pygame.display.set_caption("Poker")
     # add while loop to make it so you can play again
     playing = True
     while playing:
         print("You have started a round of poker!")
-        poker = Poker()
+        poker = Poker(surface)
         poker.play()
         if input("Type q to quit, or anything else to play again. ") == "q":
             playing = False
