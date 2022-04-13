@@ -18,6 +18,7 @@ def print_card_list(cardList):
 
 def get_choice():
     choice = input("Choose from the above choices: ")
+    print()
     while True:
         try:
             choice = int(choice)
@@ -43,7 +44,7 @@ class Poker:
         self.hand = [self.deck.give_first_card(), self.deck.give_first_card()]
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
 
-        self.surface = pygame.display.set_mode((800, 800))
+        self.surface = pygame.display.set_mode((1000, 1000))
         self.surface.fill(0x35654D)
         pygame.display.update()
 
@@ -51,11 +52,13 @@ class Poker:
         drawing = True
         self.print_all()
         if drawing:
-            self.draw_card(self.hand[0], (400, 600))
-            self.draw_card(self.hand[1], (500, 600))
-            self.draw_card(self.river[0], (100, 100))
-            self.draw_card(self.river[1], (250, 100))
-            self.draw_card(self.river[2], (400, 100))
+            self.draw_card(self.hand[0], (385, 800))
+            self.draw_card(self.hand[1], (510, 800))
+            self.draw_card(self.river[0], (200, 425))
+            self.draw_card(self.river[1], (324, 425))
+            self.draw_card(self.river[2], (448, 425))
+
+
         fourth_river = False
         while not fourth_river:
             # might have to check for space bar or something to move onto inputting
@@ -65,7 +68,7 @@ class Poker:
         self.river.append(self.deck.give_first_card())
         self.print_all()
         if drawing:
-            self.draw_card(self.river[3], (550, 100))
+            self.draw_card(self.river[3], (572, 425))
         fifth_river = False
         while not fifth_river:
             checkQuitPygame()
@@ -73,7 +76,7 @@ class Poker:
         self.river.append(self.deck.give_first_card())
         self.print_all()
         if drawing:
-            self.draw_card(self.river[4], (700, 100))
+            self.draw_card(self.river[4], (698, 425))
         self.final_result()
 
     def print_all(self):
@@ -85,10 +88,9 @@ class Poker:
         print("__________________________")
 
     def draw_card(self, card, coords):
-        name = card.name
-        name = "./PNG-cards-1.3/" + name.replace(" ", "_") + ".png"
+        name = "./images/" + card.name.replace(" ", "_") + ".png"
         cardPng = pygame.image.load(name)
-        scaledPng = pygame.transform.rotozoom(cardPng, 0, 100 / 726)
+        scaledPng = pygame.transform.rotozoom(cardPng, 0, 150 / 726)
         self.surface.blit(scaledPng, coords)
         pygame.display.update()
 
@@ -106,7 +108,7 @@ class Poker:
         choice = get_choice()
         if choice == 0:
             return True
-        self.get_probability()
+        self.get_probability(choice)
         return False
 
     def final_result(self):
@@ -121,17 +123,29 @@ class Poker:
 
     def check_ranks(self):
         cards = self.hand + self.river
-        return analyzeCards.check_ranks(cards)
+        nums = []
+        suits = []
+        for card in cards:
+            nums.append(card.rank)
+            suits.append(card.suit)
+        suitSet = set(suits)
+        numSet = set(nums)
+        return analyzeCards.check_ranks(nums, numSet, suits, suitSet)
 
-    def get_probability(self):
-        pass
+    def get_probability(self, choice):
+        print(analyzeCards.findProbabilities(choice, self.hand + self.river))
 
 
 def main():
     pygame.init()
     # add while loop to make it so you can play again
-    poker = Poker()
-    poker.play()
+    playing = True
+    while playing:
+        print("You have started a round of poker!")
+        poker = Poker()
+        poker.play()
+        if input("Type q to quit, or anything else to play again. ") == "q":
+            playing = False
     pygame.quit()
 
 
