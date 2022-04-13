@@ -1,4 +1,6 @@
 from deck_of_cards import deck_of_cards
+import pygame
+
 import analyzeCards
 
 
@@ -28,24 +30,50 @@ def get_choice():
             return choice
 
 
+def checkQuitPygame():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+
+
 class Poker:
     def __init__(self):
         self.deck = set_deck()
         self.hand = [self.deck.give_first_card(), self.deck.give_first_card()]
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
 
+        self.surface = pygame.display.set_mode((800, 800))
+        self.surface.fill(0x35654D)
+        pygame.display.update()
+
     def play(self):
+        drawing = True
         self.print_all()
+        if drawing:
+            self.draw_card(self.hand[0], (400, 600))
+            self.draw_card(self.hand[1], (500, 600))
+            self.draw_card(self.river[0], (100, 100))
+            self.draw_card(self.river[1], (250, 100))
+            self.draw_card(self.river[2], (400, 100))
         fourth_river = False
         while not fourth_river:
+            # might have to check for space bar or something to move onto inputting
+            # otherwise cannot quit pygame with the X
+            checkQuitPygame()
             fourth_river = self.ask_user()
         self.river.append(self.deck.give_first_card())
         self.print_all()
+        if drawing:
+            self.draw_card(self.river[3], (550, 100))
         fifth_river = False
         while not fifth_river:
+            checkQuitPygame()
             fifth_river = self.ask_user()
         self.river.append(self.deck.give_first_card())
         self.print_all()
+        if drawing:
+            self.draw_card(self.river[4], (700, 100))
         self.final_result()
 
     def print_all(self):
@@ -55,6 +83,14 @@ class Poker:
         print("\nRiver:")
         print_card_list(self.river)
         print("__________________________")
+
+    def draw_card(self, card, coords):
+        name = card.name
+        name = "./PNG-cards-1.3/" + name.replace(" ", "_") + ".png"
+        cardPng = pygame.image.load(name)
+        scaledPng = pygame.transform.rotozoom(cardPng, 0, 100 / 726)
+        self.surface.blit(scaledPng, coords)
+        pygame.display.update()
 
     def ask_user(self):
         print("Choose 0 to flip next card.")
@@ -72,7 +108,7 @@ class Poker:
             return True
         self.get_probability()
         return False
-    
+
     def final_result(self):
         hand_ranks = self.check_ranks()
         if len(hand_ranks) == 0:
@@ -92,9 +128,11 @@ class Poker:
 
 
 def main():
+    pygame.init()
     # add while loop to make it so you can play again
     poker = Poker()
     poker.play()
+    pygame.quit()
 
 
 if __name__ == '__main__':
