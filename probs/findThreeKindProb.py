@@ -15,15 +15,18 @@ def findProb(nums, numSet, ranks):
 
 def calculate(cards, count):
     cards_to_be_flipped = RIVERMAX - len(cards)
-    #total = math.comb(len(numSet), 1) this is calculating all at once, only want one at a time
     total = 1
+    denom = DECKLENGTH - len(cards)
     if count == 1 and len(cards) != 6:
         for i in range(cards_to_be_flipped):
-            total *= (3 - i)/(DECKLENGTH - len(cards) - i)
+            total *= (3 - i)/(denom - i)
     elif count == 1 and len(cards) == 6:
         return 0
     elif count == 2:
-        total = (2 * cards_to_be_flipped)/(DECKLENGTH - len(cards))
+        t1 = 0 if cards_to_be_flipped == 1 else ((denom - 2) / (denom)) * (2 / (denom - 1))
+        t2 = 1 if cards_to_be_flipped == 1 else (denom - 2 - 1) / (denom - 1)
+        total = 2/(denom) * t2
+        total += t1
     return total
     #  could also be adding = 2/(DECKLENGTH - len(cards)) * cards_to_be_flipped, then total *= adding
 
