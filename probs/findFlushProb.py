@@ -1,8 +1,32 @@
-import deck_of_cards
+RIVERMAX = 7
+DECKLENGTH = 52
+FLUSH = 5
+MAXSUIT = 13
 
-
-def findProb(cards, ranks):
+def findProb(suits, suitSet, ranks):
     if "flush" in ranks:
         return 1
     else:
-        return -1  # TODO: calculate this
+        cards_to_be_flipped = RIVERMAX - len(suits)
+        total = 0
+        for s in suitSet:
+            c = suits.count(s)
+            t1 = 1 if cards_to_be_flipped == 0 else (MAXSUIT - c - 1) / (DECKLENGTH - len(suits) - 1)
+            t2 = 0 if cards_to_be_flipped == 0 else (MAXSUIT - c - 1) / (DECKLENGTH - len(suits) - 1)
+            if c == FLUSH - cards_to_be_flipped:
+                total = (MAXSUIT - c) / (DECKLENGTH - len(suits)) * t1
+                break
+            elif c > FLUSH - cards_to_be_flipped:
+                total = (MAXSUIT - c) / (DECKLENGTH - len(suits)) + t2
+                break
+        return total
+
+'''
+#testing 
+
+s = [2, 2, 3, 3, 3]
+s1 = set(s)
+ranks = ["n"]
+print(findProb(s, s1, ranks))
+
+'''
