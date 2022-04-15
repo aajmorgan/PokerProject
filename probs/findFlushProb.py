@@ -12,7 +12,7 @@ def findProb(suits, suitSet, ranks):
         for s in suitSet:
             c = suits.count(s)
             t1 = 1 if cards_to_be_flipped == 0 else (MAXSUIT - c - 1) / (DECKLENGTH - len(suits) - 1)
-            t2 = 0 if cards_to_be_flipped == 0 else (MAXSUIT - c - 1) / (DECKLENGTH - len(suits) - 1)
+            t2 = 0 if cards_to_be_flipped == 0 else (MAXSUIT - c) / (DECKLENGTH - len(suits) - 1)
             if c == FLUSH - cards_to_be_flipped:
                 total = (MAXSUIT - c) / (DECKLENGTH - len(suits)) * t1
                 break
