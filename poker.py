@@ -23,10 +23,10 @@ def get_choice():
         try:
             choice = int(choice)
         except ValueError:
-            choice = input("Bad Choice. Pick a number 0-9: ")
+            choice = input("Bad Choice. Pick a number 0-10: ")
             continue
-        if choice < 0 or choice > 9:
-            choice = input("Bad Choice. Pick a number 0-9: ")
+        if choice < 0 or choice > 10:
+            choice = input("Bad Choice. Pick a number 0-10: ")
         else:
             return choice
 
@@ -56,8 +56,6 @@ class Poker:
             self.draw_card(self.river[0], (200, 425))
             self.draw_card(self.river[1], (324, 425))
             self.draw_card(self.river[2], (448, 425))
-
-
         fourth_river = False
         while not fourth_river:
             # might have to check for space bar or something to move onto inputting
@@ -104,11 +102,64 @@ class Poker:
         print("Choose 7 to see the probability of a four of a kind.")
         print("Choose 8 to see the probability of a straight flush.")
         print("Choose 9 to see the probability of a royal flush.")
+        print("Choose 10 to simulate possible outcomes.")
         choice = get_choice()
         if choice == 0:
             return True
-        self.get_probability(choice)
+        if choice == 10:
+            self.simulate()
+        else:
+            self.get_probability(choice)
         return False
+
+    def num_trials(self):
+        # use chebyshev to find
+        trials = 10000
+        return trials
+
+    def simulate(self):
+        print("\nSimulating...\n")
+        trials = self.num_trials()
+        cards = self.hand + self.river
+        counts = {
+            "pair": 0,
+            "twoPair": 0,
+            "threeKind": 0,
+            "straight": 0,
+            "flush": 0,
+            "fullHouse": 0,
+            "fourKind": 0,
+            "straightFlush": 0,
+            "royalFlush": 0
+        }
+        bests = {
+            "highCard": 0,
+            "pair": 0,
+            "twoPair": 0,
+            "threeKind": 0,
+            "straight": 0,
+            "flush": 0,
+            "fullHouse": 0,
+            "fourKind": 0,
+            "straightFlush": 0,
+            "royalFlush": 0
+        }
+        for i in range(trials):
+            num_new_cards = 7 - len(cards)
+            for j in range(num_new_cards):
+                cards.append(self.deck.give_first_card())
+            ranks = self.check_ranks(cards=cards)
+            if len(ranks) == 0:
+                bests["highCard"] += 1
+            else:
+                bests[ranks[-1]] += 1
+                for rank in ranks:
+                    counts[rank] += 1
+            for j in range(num_new_cards):
+                self.deck.take_card(cards.pop())
+            self.deck.shuffle_deck()
+        print("Counts:", counts)
+        print("Bests:", bests)
 
     def final_result(self):
         hand_ranks = self.check_ranks()
@@ -120,8 +171,9 @@ class Poker:
             print(hand_ranks)
             print(f"You got a {hand_ranks[-1]}!")
 
-    def check_ranks(self):
-        cards = self.hand + self.river
+    def check_ranks(self, cards=None):
+        if cards is None:
+            cards = self.hand + self.river
         nums = []
         suits = []
         for card in cards:
