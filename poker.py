@@ -141,12 +141,14 @@ def main():
     pygame.display.set_caption("Poker")
     # add while loop to make it so you can play again
     playing = True
+    poker = Poker(surface)
     while playing:
         print("You have started a round of poker!")
-        poker = Poker(surface)
         poker.play()
         if input("Type q to quit, or anything else to play again. ") == "q":
             playing = False
+        else:
+            poker = Poker(surface)
     pygame.quit()
 
 
