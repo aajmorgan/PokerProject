@@ -158,6 +158,10 @@ class Poker:
             for j in range(num_new_cards):
                 self.deck.take_card(cards.pop())
             self.deck.shuffle_deck()
+        for card in counts:
+            counts[card] = round(counts[card]/trials, 3)
+        for card in bests:
+            bests[card] = round(bests[card]/trials, 3)
         print("Counts:", counts)
         print("Bests:", bests)
 
