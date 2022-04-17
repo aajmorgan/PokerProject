@@ -7,18 +7,32 @@ def findProb(cards, cardSet, ranks):
         diffRanks = len(cardSet)
         if len(cards) == 5:
             if "threeKind" not in ranks:
-                # Ex 22 33 4, or 22 3 4 5
-                prob = 1 / 47 * 1 / 46
-                if diffRanks == 3:
-                    # Two different ways to get
-                    prob *= 2
+                # Ex 22 3 4 5, or 22 33 4
+                if diffRanks == 4:
+                    prob = 2 / 47 * 1 / 46
+                elif diffRanks == 3:
+                    prob = 4 / 47 * 1 / 46
+                else:
+                    return -1  # should not be able to get
                 return prob
             else:
                 # Ex 222 33 or 222 3 4
-                prob = 46 / 47 * 1 / 46 + 1 / 47 * 46 / 46  # 46/46 because can be any card, just to show work for now
-                if diffRanks == 2:
+                if diffRanks == 3:
+                    prob = 46 / 47 * 1 / 46 + 1 / 47 * 46 / 46  # 46/46 because can be any card, just show work for now
+                elif diffRanks == 2:
                     # add prob of the pair ending as four of a kind
-                    prob += 1 / 47 * 1 / 46
+                    """
+                    In Ex. of 222 33
+                    Sixth card is a 2, then doesnt matter
+                    1/47 * 46/46
+                    Sixth is a 3, then need a 3 or a 2
+                    2/47 * 2/47
+                    Not 2 or 3, then need a 2
+                    44/47 * 1 / 46
+                    """
+                    prob = 1 / 47 * 46 / 46 + 2 / 47 * 2 / 46 + 44 / 7 * 1 / 46
+                else:
+                    return -1  # should not be able to get
                 return prob
         else:  # 6 cards
             if "threeKind" not in ranks:
