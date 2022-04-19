@@ -16,7 +16,7 @@ def probSwitcher(choice, nums, numSet, suits, suitSet, ranks, cards):
         prob = findStraightProb.findProb(cards, ranks)
         print(f"Probability of a straight is {round(prob, 6) * 100}%")
     elif choice == 5:
-        prob = findFlushProb.findProb(cards, ranks)
+        prob = findFlushProb.findProb(suits, suitSet, ranks)
         print(f"Probability of a flush is {round(prob, 6) * 100}%")
     elif choice == 6:
         prob = findFullHouseProb.findProb(numSet, ranks)  # could this just be findTwoPair * findThreeKind?
