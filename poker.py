@@ -185,7 +185,7 @@ class Poker:
             suits.append(card.suit)
         suitSet = set(suits)
         numSet = set(nums)
-        return analyzeCards.check_ranks(nums, numSet, suits, suitSet)
+        return analyzeCards.check_ranks(nums, numSet, suits, suitSet, cards)
 
     def get_probability(self, choice):
         print(analyzeCards.findProbabilities(choice, self.hand + self.river))
