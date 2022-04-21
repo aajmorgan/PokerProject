@@ -8,11 +8,11 @@ def findProbabilities(choice, cards):
         suits.append(card.suit)
     suitSet = set(suits)
     numSet = set(nums)
-    ranks = check_ranks(nums, numSet, suits, suitSet)
+    ranks = check_ranks(nums, numSet, suits, suitSet, cards)
     probSwitch.probSwitcher(choice, nums, numSet, suits, suitSet, ranks, cards)
 
 
-def check_ranks(nums, numSet, suits, suitSet):
+def check_ranks(nums, numSet, suits, suitSet, cards):
     ranks = []
     hand_ranks = {
         "pair": False,
@@ -25,14 +25,14 @@ def check_ranks(nums, numSet, suits, suitSet):
         "straightFlush": False,
         "royalFlush": False
     }
-    check_all(nums, numSet, suits, suitSet, hand_ranks)
+    check_all(nums, numSet, suits, suitSet, hand_ranks, cards)
     for rank in hand_ranks:
         if hand_ranks[rank]:
             ranks.append(rank)
     return ranks
 
 
-def check_all(nums, numSet, suits, suitSet, hand_ranks):
+def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
     for num in numSet:
         x = nums.count(num)
         if x >= 2:
