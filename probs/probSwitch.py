@@ -19,7 +19,7 @@ def probSwitcher(choice, nums, numSet, suits, suitSet, ranks, cards):
         prob = findFlushProb.findProb(suits, suitSet, ranks)
         print(f"Probability of a flush is {round(prob, 6) * 100}%")
     elif choice == 6:
-        prob = findFullHouseProb.findProb(numSet, ranks)  # could this just be findTwoPair * findThreeKind?
+        prob = findFullHouseProb.findProb(nums, ranks)  # could this just be findTwoPair * findThreeKind?
         print(f"Probability of a full house is {round(prob, 6) * 100}%")
     elif choice == 7:
         prob = findFourKindProb.findProb(nums, numSet, ranks)
