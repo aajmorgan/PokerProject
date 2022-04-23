@@ -64,12 +64,10 @@ class Poker:
 
     def play(self):
         run = True
-        clock = pygame.time.Clock()
         checked = False
         fifth_river = False
         while self.game:
             check = False
-            clock.tick(10)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
