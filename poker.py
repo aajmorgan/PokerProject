@@ -3,39 +3,25 @@ import pygame
 
 import analyzeCards
 
+KEYS = {
+    pygame.K_SPACE: 10,
+    pygame.K_1: 1,
+    pygame.K_2: 2,
+    pygame.K_3: 3,
+    pygame.K_4: 4,
+    pygame.K_5: 5,
+    pygame.K_6: 6,
+    pygame.K_7: 7,
+    pygame.K_8: 8,
+    pygame.K_9: 9,
+    pygame.K_0: 11
+}
 
 # Returns a shuffled deck of cards
 def set_deck():
     deck_obj = deck_of_cards.DeckOfCards()
     deck_obj.shuffle_deck()
     return deck_obj
-
-
-def print_card_list(cardList):
-    for card in cardList:
-        print(card.name)
-
-
-def get_choice():
-    choice = input("Choose from the above choices: ")
-    print()
-    while True:
-        try:
-            choice = int(choice)
-        except ValueError:
-            choice = input("Bad Choice. Pick a number 0-10: ")
-            continue
-        if choice < 0 or choice > 10:
-            choice = input("Bad Choice. Pick a number 0-10: ")
-        else:
-            return choice
-
-
-def checkQuitPygame():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
 
 
 class Poker:
@@ -45,44 +31,59 @@ class Poker:
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
         self.surface = surface
         self.surface.fill(0x35654D)
+        self.game = True
         pygame.display.update()
 
-    def play(self):
-        drawing = True
-        self.print_all()
-        if drawing:
-            self.draw_card(self.hand[0], (385, 800))
-            self.draw_card(self.hand[1], (510, 800))
-            self.draw_card(self.river[0], (200, 425))
-            self.draw_card(self.river[1], (324, 425))
-            self.draw_card(self.river[2], (448, 425))
-        fourth_river = False
-        while not fourth_river:
-            # might have to check for space bar or something to move onto inputting
-            # otherwise cannot quit pygame with the X
-            checkQuitPygame()
-            fourth_river = self.ask_user()
-        self.river.append(self.deck.give_first_card())
-        self.print_all()
-        if drawing:
-            self.draw_card(self.river[3], (572, 425))
-        fifth_river = False
-        while not fifth_river:
-            checkQuitPygame()
-            fifth_river = self.ask_user()
-        self.river.append(self.deck.give_first_card())
-        self.print_all()
-        if drawing:
-            self.draw_card(self.river[4], (698, 425))
-        self.final_result()
+    def checkMouse(self, mouse):
+        # check where mouse is clicked, see which action to perform
+        print(f'Clicked at ({mouse[0]}, {mouse[1]})')
 
-    def print_all(self):
-        print("__________________________")
-        print("Hand:")
-        print_card_list(self.hand)
-        print("\nRiver:")
-        print_card_list(self.river)
-        print("__________________________")
+    def draw(self):
+        self.draw_card(self.hand[0], (385, 800))
+        self.draw_card(self.hand[1], (510, 800))
+        self.draw_card(self.river[0], (200, 425))
+        self.draw_card(self.river[1], (324, 425))
+        self.draw_card(self.river[2], (448, 425))
+        if len(self.river) > 3:
+            self.draw_card(self.river[3], (572, 425))
+        if len(self.river) > 4:
+            self.draw_card(self.river[4], (698, 425))   
+
+    def getKey(self, keys):
+        if keys[pygame.K_q]:
+            pygame.quit()
+            quit()
+        if keys[pygame.K_SPACE] and len(self.river) == 5:
+            self.game = False
+        self.choice = 0
+        for k in KEYS:
+            if keys[k]:
+                self.choice = KEYS[k]
+        if keys[pygame.K_RETURN]:
+            self.final_result()
+        if self.choice != 0:
+            self.ask_user()
+
+    def play(self):
+        run = True
+        clock = pygame.time.Clock()
+        fourth_river = False
+        fifth_river = False
+        while self.game:
+            check = False
+            clock.tick(10)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.checkMouse(pygame.mouse.get_pos())
+                if event.type == pygame.KEYUP:
+                    self.getKey(keys)
+            keys = pygame.key.get_pressed()
+            self.draw()
+                    
+        #self.final_result()
 
     def draw_card(self, card, coords):
         name = "./images/" + card.name.replace(" ", "_") + ".png"
@@ -92,24 +93,12 @@ class Poker:
         pygame.display.update()
 
     def ask_user(self):
-        print("Choose 0 to flip next card.")
-        print("Choose 1 to see the probability of a pair.")
-        print("Choose 2 to see the probability of a two pair.")
-        print("Choose 3 to see the probability of a three of a kind.")
-        print("Choose 4 to see the probability of a straight.")
-        print("Choose 5  to see the probability of a flush.")
-        print("Choose 6 to see the probability of a full house.")
-        print("Choose 7 to see the probability of a four of a kind.")
-        print("Choose 8 to see the probability of a straight flush.")
-        print("Choose 9 to see the probability of a royal flush.")
-        print("Choose 10 to simulate possible outcomes.")
-        choice = get_choice()
-        if choice == 0:
-            return True
-        if choice == 10:
+        if self.choice == 10 and len(self.river) < 5:
+            self.river.append(self.deck.give_first_card())
+        elif self.choice == 11:
             self.simulate()
         else:
-            self.get_probability(choice)
+            self.get_probability(self.choice)
         return False
 
     def num_trials(self):
@@ -159,9 +148,9 @@ class Poker:
                 self.deck.take_card(cards.pop())
             self.deck.shuffle_deck()
         for card in counts:
-            counts[card] = round(counts[card]/trials, 3)
+            counts[card] = f'{round((counts[card]/trials) * 100, 5)} %'
         for card in bests:
-            bests[card] = round(bests[card]/trials, 3)
+            bests[card] = f'{round((bests[card]/trials) * 100, 5)} %'
         print("Counts:", counts)
         print("Bests:", bests)
 
@@ -188,7 +177,7 @@ class Poker:
         return analyzeCards.check_ranks(nums, numSet, suits, suitSet, cards)
 
     def get_probability(self, choice):
-        print(analyzeCards.findProbabilities(choice, self.hand + self.river))
+        analyzeCards.findProbabilities(choice, self.hand + self.river)
 
 
 def main():
@@ -201,10 +190,7 @@ def main():
     while playing:
         print("You have started a round of poker!")
         poker.play()
-        if input("Type q to quit, or anything else to play again. ") == "q":
-            playing = False
-        else:
-            poker = Poker(surface)
+        poker = Poker(surface)
     pygame.quit()
 
 
