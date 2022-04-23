@@ -59,15 +59,13 @@ class Poker:
         for k in KEYS:
             if keys[k]:
                 self.choice = KEYS[k]
-        if keys[pygame.K_RETURN]:
-            self.final_result()
         if self.choice != 0:
             self.ask_user()
 
     def play(self):
         run = True
         clock = pygame.time.Clock()
-        fourth_river = False
+        checked = False
         fifth_river = False
         while self.game:
             check = False
@@ -82,8 +80,12 @@ class Poker:
                     self.getKey(keys)
             keys = pygame.key.get_pressed()
             self.draw()
-                    
-        #self.final_result()
+            if len(self.river) == 5 and not checked:
+                fifth_river = True
+            if fifth_river:
+                checked = True
+                self.final_result()
+                fifth_river = False
 
     def draw_card(self, card, coords):
         name = "./images/" + card.name.replace(" ", "_") + ".png"
