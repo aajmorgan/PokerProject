@@ -17,12 +17,16 @@ KEYS = {
     pygame.K_0: 11
 }
 
+BUTTONWIDTH, BUTTONHEIGHT = 170, 80
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
 # Returns a shuffled deck of cards
 def set_deck():
     deck_obj = deck_of_cards.DeckOfCards()
     deck_obj.shuffle_deck()
     return deck_obj
-
 
 class Poker:
     def __init__(self, surface):
@@ -47,7 +51,10 @@ class Poker:
         if len(self.river) > 3:
             self.draw_card(self.river[3], (572, 425))
         if len(self.river) > 4:
-            self.draw_card(self.river[4], (698, 425))   
+            self.draw_card(self.river[4], (698, 425))
+        for i in range(3):
+            for j in range(3):
+                pygame.draw.rect(self.surface, WHITE, [i * 400 + 30, j * 100 + 30, BUTTONWIDTH, BUTTONHEIGHT])
 
     def getKey(self, keys):
         if keys[pygame.K_q]:
