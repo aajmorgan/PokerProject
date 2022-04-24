@@ -62,6 +62,7 @@ class Poker:
             quit()
         if keys[pygame.K_SPACE] and len(self.river) == 5:
             self.game = False
+            return
         self.choice = 0
         for k in KEYS:
             if keys[k]:
