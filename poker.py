@@ -3,6 +3,8 @@ import pygame
 
 import analyzeCards
 
+pygame.font.init()
+
 KEYS = {
     pygame.K_SPACE: 10,
     pygame.K_1: 1,
@@ -21,12 +23,15 @@ BUTTONWIDTH, BUTTONHEIGHT = 170, 80
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+font = pygame.font.SysFont("arial", 23)
+
 
 # Returns a shuffled deck of cards
 def set_deck():
     deck_obj = deck_of_cards.DeckOfCards()
     deck_obj.shuffle_deck()
     return deck_obj
+
 
 class Poker:
     def __init__(self, surface):
@@ -36,25 +41,38 @@ class Poker:
         self.surface = surface
         self.surface.fill(0x35654D)
         self.game = True
+        self.buttons = []
+        for j in range(4):
+            for i in range(3):
+                self.buttons.append(pygame.Rect(i * 400 + 15, j * 100 + 15, BUTTONWIDTH, BUTTONHEIGHT))
         pygame.display.update()
+        self.buttonTexts = ["Pair", "Two Pair", "Three of a Kind", "Straight", "Flush", "Full House", "Four of a Kind",
+                            "Straight Flush", "Royal Flush", "Simulate", "Next Card", "Choose Card"]
+        self.drawnAlready = False
 
     def checkMouse(self, mouse):
         # check where mouse is clicked, see which action to perform
         print(f'Clicked at ({mouse[0]}, {mouse[1]})')
 
     def draw(self):
-        self.draw_card(self.hand[0], (385, 800))
-        self.draw_card(self.hand[1], (510, 800))
-        self.draw_card(self.river[0], (200, 425))
-        self.draw_card(self.river[1], (324, 425))
-        self.draw_card(self.river[2], (448, 425))
-        if len(self.river) > 3:
+        if len(self.river) <= 3 and not self.drawnAlready:
+            self.draw_card(self.hand[0], (385, 800))
+            self.draw_card(self.hand[1], (510, 800))
+            self.draw_card(self.river[0], (200, 425))
+            self.draw_card(self.river[1], (324, 425))
+            self.draw_card(self.river[2], (448, 425))
+            for i, button in enumerate(self.buttons):
+                pygame.draw.rect(self.surface, WHITE, button)
+                text = font.render(f"{self.buttonTexts[i]}", True, BLACK, WHITE)
+                textRect = text.get_rect()
+                textRect.center = button.center
+                self.surface.blit(text, textRect)
+            pygame.display.update()
+            self.drawnAlready = True
+        if len(self.river) == 4:
             self.draw_card(self.river[3], (572, 425))
-        if len(self.river) > 4:
+        if len(self.river) == 5:
             self.draw_card(self.river[4], (698, 425))
-        for i in range(3):
-            for j in range(3):
-                pygame.draw.rect(self.surface, WHITE, [i * 400 + 30, j * 100 + 30, BUTTONWIDTH, BUTTONHEIGHT])
 
     def getKey(self, keys):
         if keys[pygame.K_q]:
@@ -71,11 +89,10 @@ class Poker:
             self.ask_user()
 
     def play(self):
-        run = True
         checked = False
         fifth_river = False
         while self.game:
-            check = False
+            keys = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -84,7 +101,6 @@ class Poker:
                     self.checkMouse(pygame.mouse.get_pos())
                 if event.type == pygame.KEYUP:
                     self.getKey(keys)
-            keys = pygame.key.get_pressed()
             self.draw()
             if len(self.river) == 5 and not checked:
                 fifth_river = True
@@ -156,9 +172,9 @@ class Poker:
                 self.deck.take_card(cards.pop())
             self.deck.shuffle_deck()
         for card in counts:
-            counts[card] = f'{round((counts[card]/trials) * 100, 5)} %'
+            counts[card] = f'{round((counts[card] / trials) * 100, 5)} %'
         for card in bests:
-            bests[card] = f'{round((bests[card]/trials) * 100, 5)} %'
+            bests[card] = f'{round((bests[card] / trials) * 100, 5)} %'
         print("Counts:", counts)
         print("Bests:", bests)
 
