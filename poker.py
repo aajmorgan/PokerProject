@@ -1,3 +1,5 @@
+import math
+
 from deck_of_cards import deck_of_cards
 import pygame
 
@@ -6,7 +8,6 @@ import analyzeCards
 pygame.font.init()
 
 KEYS = {
-    pygame.K_SPACE: 10,
     pygame.K_1: 1,
     pygame.K_2: 2,
     pygame.K_3: 3,
@@ -16,14 +17,16 @@ KEYS = {
     pygame.K_7: 7,
     pygame.K_8: 8,
     pygame.K_9: 9,
-    pygame.K_0: 11
+    pygame.K_SPACE: 10,
+    pygame.K_0: 11,
+    pygame.K_e: 12
 }
 
 BUTTONWIDTH, BUTTONHEIGHT = 170, 80
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-font = pygame.font.SysFont("arial", 23)
+font = pygame.font.SysFont("arial", 20)
 
 
 # Returns a shuffled deck of cards
@@ -40,74 +43,88 @@ class Poker:
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
         self.surface = surface
         self.surface.fill(0x35654D)
-        self.game = True
+        pygame.event.set_blocked(None)
+        pygame.event.set_allowed([pygame.KEYDOWN, pygame.QUIT, pygame.MOUSEBUTTONDOWN])
         self.buttons = []
         for j in range(4):
             for i in range(3):
                 self.buttons.append(pygame.Rect(i * 400 + 15, j * 100 + 15, BUTTONWIDTH, BUTTONHEIGHT))
         pygame.display.update()
-        self.buttonTexts = ["Pair", "Two Pair", "Three of a Kind", "Straight", "Flush", "Full House", "Four of a Kind",
-                            "Straight Flush", "Royal Flush", "Simulate", "Next Card", "Choose Card"]
-        self.drawnAlready = False
+        self.buttonTexts = ["(1) Pair", "(2) Two Pair", "(3) Three of a Kind", "(4) Straight", "(5) Flush",
+                            "(6) Full House", "(7) Four of a Kind", "(8) Straight Flush", "(9) Royal Flush",
+                            "(Space) Next Card", "(0) Simulate", "(e) Choose Card"]
 
     def checkMouse(self, mouse):
         # check where mouse is clicked, see which action to perform
-        print(f'Clicked at ({mouse[0]}, {mouse[1]})')
+        gotButton = False
+        button = None
+        for j in range(4):
+            for i in range(3):
+                left = i * 400 + 15
+                top = j * 100 + 15
+                if (mouse[0] in range(left, left + BUTTONWIDTH)) and (mouse[1] in range(top, top + BUTTONHEIGHT)):
+                    button = j * 3 + i + 1
+                    gotButton = True
+                    break
+            if gotButton:
+                break
+        return button
 
-    def draw(self):
-        if len(self.river) <= 3 and not self.drawnAlready:
-            self.draw_card(self.hand[0], (385, 800))
-            self.draw_card(self.hand[1], (510, 800))
-            self.draw_card(self.river[0], (200, 425))
-            self.draw_card(self.river[1], (324, 425))
-            self.draw_card(self.river[2], (448, 425))
-            for i, button in enumerate(self.buttons):
-                pygame.draw.rect(self.surface, WHITE, button)
-                text = font.render(f"{self.buttonTexts[i]}", True, BLACK, WHITE)
-                textRect = text.get_rect()
-                textRect.center = button.center
-                self.surface.blit(text, textRect)
-            pygame.display.update()
-            self.drawnAlready = True
-        if len(self.river) == 4:
-            self.draw_card(self.river[3], (572, 425))
-        if len(self.river) == 5:
-            self.draw_card(self.river[4], (698, 425))
+    def drawFirstFive(self):
+        self.draw_card(self.hand[0], (385, 800))
+        self.draw_card(self.hand[1], (510, 800))
+        self.draw_card(self.river[0], (200, 425))
+        self.draw_card(self.river[1], (324, 425))
+        self.draw_card(self.river[2], (448, 425))
+        for i, button in enumerate(self.buttons):
+            pygame.draw.rect(self.surface, WHITE, button)
+            text = font.render(f"{self.buttonTexts[i]}", True, BLACK, WHITE)
+            textRect = text.get_rect()
+            textRect.center = button.center
+            self.surface.blit(text, textRect)
+        pygame.display.update()
 
-    def getKey(self, keys):
-        if keys[pygame.K_q]:
+    @staticmethod
+    def getKey(event):
+        if event.key == pygame.K_q:
             pygame.quit()
             quit()
-        if keys[pygame.K_SPACE] and len(self.river) == 5:
-            self.game = False
-            return
-        self.choice = 0
-        for k in KEYS:
-            if keys[k]:
-                self.choice = KEYS[k]
-        if self.choice != 0:
-            self.ask_user()
+        elif event.key in KEYS:
+            return KEYS[event.key]
+        else:
+            return None
 
     def play(self):
-        checked = False
-        fifth_river = False
-        while self.game:
-            keys = pygame.key.get_pressed()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        running = True
+        choice = None
+        self.drawFirstFive()
+        while running:
+            event = pygame.event.wait()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                choice = self.getKey(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                choice = self.checkMouse(pygame.mouse.get_pos())
+            if choice is not None:
+                self.doChoice(choice)
+            if len(self.river) == 5:
+                running = False
+                self.final_result()
+        print("Press Space to play again, or q to quit.\n")
+        askNextGame = True
+        while askNextGame:
+            event = pygame.event.wait()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
                     pygame.quit()
                     quit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.checkMouse(pygame.mouse.get_pos())
-                if event.type == pygame.KEYUP:
-                    self.getKey(keys)
-            self.draw()
-            if len(self.river) == 5 and not checked:
-                fifth_river = True
-            if fifth_river:
-                checked = True
-                self.final_result()
-                fifth_river = False
+                elif event.key == pygame.K_SPACE:
+                    askNextGame = False
 
     def draw_card(self, card, coords):
         name = "./images/" + card.name.replace(" ", "_") + ".png"
@@ -116,18 +133,26 @@ class Poker:
         self.surface.blit(scaledPng, coords)
         pygame.display.update()
 
-    def ask_user(self):
-        if self.choice == 10 and len(self.river) < 5:
+    def doChoice(self, choice):
+        if choice == 10 and len(self.river) < 5:
             self.river.append(self.deck.give_first_card())
-        elif self.choice == 11:
+            if len(self.river) == 4:
+                self.draw_card(self.river[3], (572, 425))
+            if len(self.river) == 5:
+                self.draw_card(self.river[4], (698, 425))
+        elif choice == 11:
             self.simulate()
+        elif choice == 12:
+            print("Choose Card not added yet")
         else:
-            self.get_probability(self.choice)
+            self.get_probability(choice)
         return False
 
-    def num_trials(self):
-        # use chebyshev to find
-        trials = 10000
+    @staticmethod
+    def num_trials(err=.01, prob=.05):
+        # Use chebyshev to find
+        trials = math.ceil(.25/((err ** 2) * prob))
+        print(trials)
         return trials
 
     def simulate(self):
