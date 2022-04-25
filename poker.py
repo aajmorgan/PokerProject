@@ -143,7 +143,7 @@ class Poker:
         elif choice == 11:
             self.simulate()
         elif choice == 12:
-            print("Choose Card not added yet")
+            self.inputCards()
         else:
             self.get_probability(choice)
         return False
@@ -154,6 +154,45 @@ class Poker:
         trials = math.ceil(.25/((err ** 2) * prob))
         print(trials)
         return trials
+    
+    def inputCards(self):
+        while True:
+            try:
+                num_cards = int(input("How many cards would you like to input: "))
+                while num_cards not in range(1, 7):
+                    num_cards = int(input("Invalid number of cards"))
+                break
+            except ValueError:
+                print("Invalid input. Try again")
+        newDeck = []
+        while len(newDeck) < num_cards:
+            suit = int(input("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs: "))
+            while suit not in range(0, 4):
+                suit = int(input("Invalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs: "))
+            rank = int(input("Ranks. 11=Jack, 12=Queen, 13=King, 1=Ace: "))
+            while rank not in range(1, 14):
+                rank = int(input("Invalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace: "))
+            card = deck_of_cards.Card((suit, rank))
+            if card not in newDeck:
+                newDeck.append(card)
+            else:
+                print("Card already in deck")
+        self.deck = set_deck()
+        for card in newDeck:
+            self.deck.deck.remove(card)
+        if len(newDeck) > 2:
+            self.hand = newDeck[:2]
+            self.river = newDeck[2:]
+        else:
+            self.hand = newDeck[:]
+            self.river = []
+            while len(self.hand) < 2:
+                self.hand.append(self.deck.give_first_card())
+        while len(self.river) < 3:
+            self.river.append(self.deck.give_first_card())
+        self.surface.fill(0x35654D)
+        pygame.display.update()
+        self.drawFirstFive()
 
     def simulate(self):
         print("\nSimulating...\n")
