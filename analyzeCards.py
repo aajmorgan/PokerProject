@@ -76,7 +76,7 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
                             hand_ranks["straight"] = True
                             break
     cardsCopy = cards[:]
-    if "flush" in hand_ranks and "straight" in hand_ranks:
+    if hand_ranks['flush'] and hand_ranks["straight"]:
         for card in cards:
             print(card.name)
             if card.suit != flushSuit and flushSuit is not None:
