@@ -165,16 +165,29 @@ class Poker:
             except ValueError:
                 print("Invalid input. Try again")
         newDeck = []
+        print("Ranks. 11=Jack, 12=Queen, 13=King, 1=Ace")
+        print("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
         while len(newDeck) < num_cards:
-            suit = int(input("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs: "))
-            while suit not in range(0, 4):
-                suit = int(input("Invalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs: "))
-            rank = int(input("Ranks. 11=Jack, 12=Queen, 13=King, 1=Ace: "))
-            while rank not in range(1, 14):
-                rank = int(input("Invalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace: "))
-            card = deck_of_cards.Card((suit, rank))
-            if card not in newDeck:
-                newDeck.append(card)
+            while True:
+                print("Type in rank suit (ex: 11 2 for Jack of diamonds)")
+                inputList = input().split()
+                suit = inputList[1]
+                rank = inputList[0]
+                try:
+                    suit = int(suit)
+                    rank = int(rank)
+                    break
+                except ValueError:
+                    print("Invalid input. Type in numbers")
+            if suit not in range(0, 4):
+                print("Invalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
+            elif rank not in range(1, 14):
+                print("Invalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace")
+            else:
+                card = deck_of_cards.Card((suit, rank))
+                if card not in newDeck:
+                    newDeck.append(card)
+                    print(card.name)
             else:
                 print("Card already in deck")
         self.deck = set_deck()
