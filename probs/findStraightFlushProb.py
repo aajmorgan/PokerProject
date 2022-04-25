@@ -1,15 +1,21 @@
-import deck_of_cards
+RIVERMAX = 7
 DECKLENGTH = 52
+FLUSH = 5
+MAXSUIT = 13
 
-def findProb(card, cardSet, ranks):
+def findProb(cards, suits, suitSet, ranks):
     if "straightFlush" in ranks:
         return 1
     else:
-        prob = 0
-        if "Flush" in ranks:
-            if "Straight" in ranks:
-                prob = 1/(DECKLENGTH - len(cardSet))
-        else:
-            prob = 0
-        return prob
-            
+        x = None
+        suitNum = 3 if len(cards) == 5 else 4
+        newCards = []
+        for suit in suitSet:
+            if suits.count(suits) >= suitNum:
+                x = suit
+        if x != None:
+            for card in cards: #this is the actual cards, not numbers
+                if card.suit == x:
+                    newCards.append(card.rank)
+            #now do stuff on newCards, which is numbers, and check for straight
+        return 0 #none of the suits had enough in the hand
