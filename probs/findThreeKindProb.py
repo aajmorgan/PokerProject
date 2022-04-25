@@ -50,6 +50,6 @@ def calculate(cards, count):
 testing below
 nums = [1, 4, 5, 2, 6]
 numSet = set(nums)
-ranks = ["pair"]
+ranks =  ["pair"]
 print(findProb(nums, numSet, ranks))
 '''
