@@ -70,19 +70,21 @@ def calculateTwoPair(cards):
     '''
     cards_to_be_flipped = RIVERMAX - len(cards)
     denom = DECKLENGTH - len(cards)
+    
+    temp = 3 if len(set(cards)) == 3 else 2
+    pairs = 2 if len(cards) == 5 else temp
 
     # can group either pair getting it's third card into 1
     # so there can be 4 possible cards since both numbers have 2 cards remaining
-    NUMERATOR = 4
 
     if cards_to_be_flipped == 2:
-        total = (NUMERATOR / denom) * ((denom - NUMERATOR - 1) / (denom - 1))
-        total += ((denom - NUMERATOR) / denom) * (NUMERATOR / (denom - 1))
+        total = (pairs * 2 / denom)
+        total += ((denom - (pairs * 2)) / denom) * ((pairs * 2) / (denom - 1))
         # does the denom - NUMERATOR need to be NUMERATOR?
         # as in is it ok if it's one of those 4 or should that be taken off still?
     else:
         # know denom is 46 instead of 47 because of equation above for denom
-        total = NUMERATOR / denom
+        total = (pairs * 2) / denom
 
     return total
 
