@@ -1,4 +1,6 @@
 from probs import probSwitch
+from deck_of_cards import deck_of_cards
+
 
 def findProbabilities(choice, cards):
     nums = []
@@ -51,26 +53,53 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
                 if hand_ranks["twoPair"]:
                     if nums.count(otherNum) >= 3 or nums.count(num) >= 3:
                         hand_ranks["fullHouse"] = True
+    flushSuit = None
     for suit in suitSet:
         x = suits.count(suit)
         if x >= 5:
             hand_ranks["flush"] = True
+            flushSuit = suit
     numsNoDups = sorted(numSet)
     for num in numsNoDups:
         if num == 1:
             numsNoDups.remove(1)
             numsNoDups.append(14)
+            print(numsNoDups)
     numsNoDups = sorted(numSet)
     if len(numsNoDups) >= 5:
         numsNoDups.reverse()
         for i in range(len(numsNoDups) - 4):
-            if (numsNoDups[i]-1) == numsNoDups[i+1]:
-                if (numsNoDups[i] - 2) == numsNoDups[i+2]:
-                    if (numsNoDups[i] - 3) == numsNoDups[i+3]:
-                        if (numsNoDups[i] - 4) == numsNoDups[i+4]:
+            if (numsNoDups[i] - 1) == numsNoDups[i + 1]:
+                if (numsNoDups[i] - 2) == numsNoDups[i + 2]:
+                    if (numsNoDups[i] - 3) == numsNoDups[i + 3]:
+                        if (numsNoDups[i] - 4) == numsNoDups[i + 4]:
                             hand_ranks["straight"] = True
-                            # IDK how to do straight flush and royal flush yet, but royal flush should
-                            # just be if its a straight flush with first card being ace (cause I reversed list)
-
-
-
+                            break
+    cardsCopy = cards[:]
+    if "flush" in hand_ranks and "straight" in hand_ranks:
+        for card in cards:
+            print(card.name)
+            if card.suit != flushSuit and flushSuit is not None:
+                cardsCopy.remove(card)
+        if len(cardsCopy) >= 5:
+            newNums = []
+            for card in cardsCopy:
+                newNums.append(card.rank)
+            newNumSet = set(newNums)
+            numsNoDups = sorted(newNumSet)
+            for num in numsNoDups:
+                if num == 1:
+                    numsNoDups.remove(1)
+                    numsNoDups.append(14)
+                    print(numsNoDups)
+            numsNoDups = sorted(numSet)
+            numsNoDups.reverse()
+            for i in range(len(numsNoDups) - 4):
+                if (numsNoDups[i] - 1) == numsNoDups[i + 1]:
+                    if (numsNoDups[i] - 2) == numsNoDups[i + 2]:
+                        if (numsNoDups[i] - 3) == numsNoDups[i + 3]:
+                            if (numsNoDups[i] - 4) == numsNoDups[i + 4]:
+                                hand_ranks["straightFlush"] = True
+                                if numsNoDups[i] == 14:
+                                    hand_ranks["royalFlush"] = True
+                                break
