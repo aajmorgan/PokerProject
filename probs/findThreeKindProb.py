@@ -4,8 +4,6 @@ DECKLENGTH = 52
 def findProb(nums, numSet, ranks):
     if "threeKind" in ranks:
         return 1
-    elif "pair" not in ranks and len(nums) == 6:
-        return 0
     else: 
         total = 0
         for card in numSet:
@@ -23,10 +21,9 @@ def calculate(cards, count):
     elif count == 1 and len(cards) == 6:
         return 0
     elif count == 2:
-        t1 = 0 if cards_to_be_flipped == 1 else ((denom - 2) / (denom)) * (2 / (denom - 1))
-        t2 = 1 if cards_to_be_flipped == 1 else (denom - 2 - 1) / (denom - 1)
-        total = 2/(denom) * t2
-        total += t1
+        total = 2/(denom)
+        if cards_to_be_flipped != 1:
+            total = (total * (denom-2)/denom) + 2/(denom-1)
     return total
     #  could also be adding = 2/(DECKLENGTH - len(cards)) * cards_to_be_flipped, then total *= adding
 
