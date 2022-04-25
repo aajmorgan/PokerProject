@@ -17,5 +17,5 @@ def findProb(cards, suits, suitSet, ranks):
             for card in cards: #this is the actual cards, not numbers
                 if card.suit == x:
                     newCards.append(card.rank)
-            #now do stuff on newCards, which is numbers, and check for straight
+            straight.getProb(newcards, set(newCards), ranks)
         return 0 #none of the suits had enough in the hand
