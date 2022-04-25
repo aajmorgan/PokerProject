@@ -1,3 +1,5 @@
+from . import findStraightProb as straight
+
 RIVERMAX = 7
 DECKLENGTH = 52
 FLUSH = 5
@@ -17,5 +19,5 @@ def findProb(cards, suits, suitSet, ranks):
             for card in cards: #this is the actual cards, not numbers
                 if card.suit == x:
                     newCards.append(card.rank)
-            straight.getProb(newcards, set(newCards), ranks)
+            straight.findProb(newcards, set(newCards), ranks)
         return 0 #none of the suits had enough in the hand
