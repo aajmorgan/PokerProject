@@ -160,17 +160,21 @@ class Poker:
             try:
                 num_cards = int(input("How many cards would you like to input: "))
                 while num_cards not in range(1, 7):
-                    num_cards = int(input("Invalid number of cards"))
+                    print("Invalid number of cards. Try again.\n")
+                    num_cards = int(input("How many cards would you like to input: "))
                 break
             except ValueError:
                 print("Invalid input. Try again")
         newDeck = []
-        print("Ranks. 11=Jack, 12=Queen, 13=King, 1=Ace")
-        print("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
+        print("\nRanks. 11=Jack, 12=Queen, 13=King, 1=Ace")
+        print("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs\n")
         while len(newDeck) < num_cards:
             while True:
                 print("Type in rank suit (ex: 11 2 for Jack of diamonds)")
                 inputList = input().split()
+                while len(inputList) != 2:
+                    print("Invalid input length. Try again")
+                    inputList = input().split()
                 suit = inputList[1]
                 rank = inputList[0]
                 try:
@@ -178,18 +182,19 @@ class Poker:
                     rank = int(rank)
                     break
                 except ValueError:
-                    print("Invalid input. Type in numbers")
+                    print("\nInvalid input. Type in numbers")
             if suit not in range(0, 4):
-                print("Invalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
+                print("\nInvalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
             elif rank not in range(1, 14):
-                print("Invalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace")
+                print("\nInvalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace")
             else:
                 card = deck_of_cards.Card((suit, rank))
                 if card not in newDeck:
                     newDeck.append(card)
                     print(card.name)
-            else:
-                print("Card already in deck")
+                    print()
+                else:
+                    print("\nCard already in deck\n")
         self.deck = set_deck()
         for card in newDeck:
             self.deck.deck.remove(card)
