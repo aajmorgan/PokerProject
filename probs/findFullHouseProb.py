@@ -2,9 +2,10 @@ import math
 
 RIVERMAX = 7
 DECKLENGTH = 52
-NUMS = 4 # both for individual nums and nums it can't be
+NUMS = 4  # both for individual nums and nums it can't be
 
-def findProb(cards, cardSet, ranks):
+
+def findProb(cards, ranks):
     if "fullHouse" in ranks:
         return 1
     elif "pair" not in ranks:
@@ -18,6 +19,7 @@ def findProb(cards, cardSet, ranks):
             return calculateTwoPair(cards)
         else:
             return calculate(cards)
+
 
 def calculate(cards):
     '''
@@ -39,13 +41,13 @@ def calculate(cards):
     total2 = 0
     denom = DECKLENGTH - len(cards)
 
-    #only do once
+    # only do once
     l = math.comb(len(cards) - 2, 1)
 
     # start with pair being the three of a kind
-    total1 += ((NUMS - 2) / denom) * ((NUMS - 1) / (denom - 1)) # 3rd then 2nd
-    #need to check if third card is in either spot
-    total1 += ((NUMS - 1) / denom) * ((NUMS - 2) / (denom - 1)) # 2nd then 3rd
+    total1 += ((NUMS - 2) / denom) * ((NUMS - 1) / (denom - 1))  # 3rd then 2nd
+    # need to check if third card is in either spot
+    total1 += ((NUMS - 1) / denom) * ((NUMS - 2) / (denom - 1))  # 2nd then 3rd
 
     # pair stays pair, other card becomes 3 of a kind
     # that other card needs to be in our set, then in both spots
@@ -53,7 +55,8 @@ def calculate(cards):
     total2 += ((NUMS - 1) / denom) * ((NUMS - 2) / (denom - 1))
 
     return l * (total1 + total2)
-        
+
+
 def calculateTwoPair(cards):
     '''
     With 2 pair, there's a couple of options based on cards_to_be_flipped
@@ -83,26 +86,17 @@ def calculateTwoPair(cards):
 
     return total
 
+
 def calculatePair(cards, c):
-    cards_to_be_flipped = DECKLENGTH - len(cards)
-    l = math.comb(len(cards), 1) - c
+    cards_to_be_flipped = RIVERMAX - len(cards)
+    unmatchedCards = len(cards) - c
     denom = DECKLENGTH - len(cards)
-    left = NUMS - c # num cards left in 3 of a kind number
+    left = NUMS - c  # num cards left in 3 of a kind number
     if cards_to_be_flipped == 2:
-        total = ((NUMS - 1)/denom) * (denom - (NUMS - 1)  - left - 1)/(denom - 1) + (denom - (NUMS - 1) - left) / (denom) * ((NUMS - 1)/(denom - 1))
+        total = (unmatchedCards * ((NUMS - 1) / denom)) + \
+                ((denom - (unmatchedCards * 3)) / denom) * ((unmatchedCards * 3) / (denom - 1)) + \
+                (((denom - (unmatchedCards * 3) - left) / denom) * (3 / (denom - 1)))
+        print(total, (unmatchedCards * ((NUMS - 1) / denom)),  ((denom - (unmatchedCards * 3)) / denom) * ((unmatchedCards * 3) / (denom - 1)), (((denom - (unmatchedCards * 3) - left) / denom) * (3 / (denom - 1))))
     else:
-        total = (NUMS - 1)/denom
-    adding = 0 if cards_to_be_flipped == 1 else (NUMS / denom) * ((NUMS - 1) / (denom - 1))
-    total += adding
-    return l * total
-
-'''
-#testing 
-
-
-cards = [1, 3, 2, 3, 2]
-cardSet = set(cards)
-ranks = ['pair', 'twoPair']
-print(findProb(cards, cardSet, ranks))
-
-#'''
+        total = unmatchedCards * (NUMS - 1) / denom
+    return total
