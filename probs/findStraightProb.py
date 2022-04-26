@@ -6,7 +6,8 @@ def findProb(cards, ranks):
         return 1
     else:
         prob = 0
-        sorted_cards = set(sorted(cards))
+        no_dups_sorted_cards = set(sorted(cards))
+        sorted_cards = list(no_dups_sorted_cards)
         if len(cards) == 5:
             denom = DECKLENGTH - len(sorted_cards)
             poss_cards = 0
