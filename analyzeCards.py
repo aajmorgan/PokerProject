@@ -65,7 +65,7 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
             numsNoDups.remove(1)
             numsNoDups.append(14)
             print(numsNoDups)
-    numsNoDups = sorted(numSet)
+    numsNoDups = sorted(numsNoDups)
     if len(numsNoDups) >= 5:
         numsNoDups.reverse()
         for i in range(len(numsNoDups) - 4):
@@ -76,7 +76,7 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
                             hand_ranks["straight"] = True
                             break
     cardsCopy = cards[:]
-    if hand_ranks['flush'] and hand_ranks["straight"]:
+    if hand_ranks["flush"] and hand_ranks["straight"]:
         for card in cards:
             print(card.name)
             if card.suit != flushSuit and flushSuit is not None:
@@ -91,7 +91,6 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
                 if num == 1:
                     numsNoDups.remove(1)
                     numsNoDups.append(14)
-                    print(numsNoDups)
             numsNoDups = sorted(numSet)
             numsNoDups.reverse()
             for i in range(len(numsNoDups) - 4):
