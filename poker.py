@@ -211,6 +211,9 @@ class Poker:
         self.surface.fill(0x35654D)
         pygame.display.update()
         self.drawFirstFive()
+        if num_cards == 6:
+            self.draw_card(self.river[3], (572, 425))
+        pygame.display.update()
 
     def simulate(self):
         print("\nSimulating...\n")
