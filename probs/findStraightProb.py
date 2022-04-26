@@ -1,15 +1,15 @@
 import deck_of_cards
 DECKLENGTH = 52
-SUITS = 4
-def findProb(cards, ranks):
+def findProb(cards, ranks, straightFlush=0):
+    SUITS = 4 if straightFlush == 0 else 1
     if "straight" in ranks:
         return 1
     else:
         prob = 0
-        no_dups_sorted_cards = set(sorted(cards))
-        sorted_cards = list(no_dups_sorted_cards)
-        denom = DECKLENGTH - len(sorted_cards)
-        if len(cards) == 5:
+        num_cards = len(cards) if straightFlush == 0 else straightFlush
+        sorted_cards = sorted(cards)
+        denom = DECKLENGTH - num_cards
+        if num_cards == 5:
             poss_cards = 0
             if "fourKind" in ranks:
                 return 0
