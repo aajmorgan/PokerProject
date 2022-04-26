@@ -6,17 +6,12 @@ def findProb(cards, ranks):
         return 1
     else:
         prob = 0
-        sorted_cards = sorted(cards)
+        sorted_cards = set(sorted(cards))
         if len(cards) == 5:
             denom = DECKLENGTH - len(sorted_cards)
             poss_cards = 0
             if "fourKind" in ranks:
                 return 0
-            if "threeKind" in ranks:
-                return 0
-            #5 in a row already
-            if (sorted_cards[4] - sorted_cards[0] + 1) == 5:
-                prob = 1
             #4 in a row already, can be in 2 places 
             if (sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4:
                 poss_cards = 2
@@ -43,9 +38,6 @@ def findProb(cards, ranks):
                 return 0
             if "threeKind" in ranks:
                 return 0
-            #5 in a row already
-            if (sorted_cards[4] - sorted_cards[0] + 1) == 5 or (sorted_cards[5] - sorted_cards[1] + 1) == 5:
-                prob = 1
             #4 in a row already, can be in 2 places 
             if (sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4 or (sorted_cards[5] - sorted_cards[2] + 1) == 4:
                 poss_cards = 2 
