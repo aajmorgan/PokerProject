@@ -78,7 +78,6 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
     cardsCopy = cards[:]
     if hand_ranks["flush"] and hand_ranks["straight"]:
         for card in cards:
-            print(card.name)
             if card.suit != flushSuit and flushSuit is not None:
                 cardsCopy.remove(card)
         if len(cardsCopy) >= 5:
