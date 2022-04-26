@@ -8,8 +8,8 @@ def findProb(cards, ranks):
         prob = 0
         no_dups_sorted_cards = set(sorted(cards))
         sorted_cards = list(no_dups_sorted_cards)
+        denom = DECKLENGTH - len(sorted_cards)
         if len(cards) == 5:
-            denom = DECKLENGTH - len(sorted_cards)
             poss_cards = 0
             if "fourKind" in ranks:
                 return 0
