@@ -64,7 +64,6 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
         if num == 1:
             numsNoDups.remove(1)
             numsNoDups.append(14)
-            print(numsNoDups)
     numsNoDups = sorted(numsNoDups)
     if len(numsNoDups) >= 5:
         numsNoDups.reverse()
@@ -76,28 +75,26 @@ def check_all(nums, numSet, suits, suitSet, hand_ranks, cards):
                             hand_ranks["straight"] = True
                             break
     cardsCopy = cards[:]
-    if hand_ranks["flush"] and hand_ranks["straight"]:
+    if hand_ranks['flush'] and hand_ranks["straight"]:
         for card in cards:
-            if card.suit != flushSuit and flushSuit is not None:
+            if card.suit != flushSuit:
                 cardsCopy.remove(card)
         if len(cardsCopy) >= 5:
             newNums = []
             for card in cardsCopy:
                 newNums.append(card.rank)
-            newNumSet = set(newNums)
-            numsNoDups = sorted(newNumSet)
-            for num in numsNoDups:
+            for num in newNums:
                 if num == 1:
-                    numsNoDups.remove(1)
-                    numsNoDups.append(14)
-            numsNoDups = sorted(numSet)
-            numsNoDups.reverse()
-            for i in range(len(numsNoDups) - 4):
-                if (numsNoDups[i] - 1) == numsNoDups[i + 1]:
-                    if (numsNoDups[i] - 2) == numsNoDups[i + 2]:
-                        if (numsNoDups[i] - 3) == numsNoDups[i + 3]:
-                            if (numsNoDups[i] - 4) == numsNoDups[i + 4]:
+                    newNums.remove(1)
+                    newNums.append(14)
+            newNums = sorted(newNums)
+            newNums.reverse()
+            for i in range(len(newNums) - 4):
+                if (newNums[i] - 1) == newNums[i + 1]:
+                    if (newNums[i] - 2) == newNums[i + 2]:
+                        if (newNums[i] - 3) == newNums[i + 3]:
+                            if (newNums[i] - 4) == newNums[i + 4]:
                                 hand_ranks["straightFlush"] = True
-                                if numsNoDups[i] == 14:
+                                if newNums[i] == 14:
                                     hand_ranks["royalFlush"] = True
                                 break
