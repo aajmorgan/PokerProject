@@ -21,15 +21,6 @@ def findProb(cards, cardSet, ranks):
                     prob = 46 / 47 * 1 / 46 + 1 / 47 * 46 / 46  # 46/46 because can be any card, just show work for now
                 elif diffRanks == 2:
                     # add prob of the pair ending as four of a kind
-                    """
-                    In Ex. of 222 33
-                    Sixth card is a 2, then doesnt matter
-                    1/47 * 46/46
-                    Sixth is a 3, then need a 3 or a 2
-                    2/47 * 2/47
-                    Not 2 or 3, then need a 2
-                    44/47 * 1 / 46
-                    """
                     prob = 1 / 47 * 46 / 46 + 2 / 47 * 2 / 46 + 44 / 7 * 1 / 46
                 else:
                     return -1  # should not be able to get
