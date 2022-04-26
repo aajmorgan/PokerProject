@@ -4,6 +4,8 @@ def findProb(cards, ranks, straightFlush=0):
     SUITS = 4 if straightFlush == 0 else 1
     if "straight" in ranks:
         return 1
+    elif "fourKind" or "fullHouse" in ranks:
+        return 0
     else:
         prob = 0
         num_cards = len(cards) if straightFlush == 0 else straightFlush
@@ -11,8 +13,6 @@ def findProb(cards, ranks, straightFlush=0):
         denom = DECKLENGTH - num_cards
         if num_cards == 5:
             poss_cards = 0
-            if "fourKind" in ranks:
-                return 0
             #4 in a row already, can be in 2 places 
             if (sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4:
                 poss_cards = 2
@@ -35,8 +35,6 @@ def findProb(cards, ranks, straightFlush=0):
                 prob = (SUITS*poss_cards)/denom
         #if 6 cards 
         else:
-            if "fourKind" in ranks:
-                return 0
             if "threeKind" in ranks:
                 return 0
             #4 in a row already, can be in 2 places 
