@@ -1,8 +1,7 @@
-from probs import probSwitch
-from deck_of_cards import deck_of_cards
+from probs import findFlushProb, findFourKindProb, findFullHouseProb, findPairProb, findRoyalFlushProb, \
+    findStraightFlushProb, findStraightProb, findThreeKindProb, findTwoPairProb
 
-
-def findProbabilities(choice, cards):
+def findProbabilities(cards):
     nums = []
     suits = []
     for card in cards:
@@ -11,7 +10,18 @@ def findProbabilities(choice, cards):
     suitSet = set(suits)
     numSet = set(nums)
     ranks = check_ranks(nums, numSet, suits, suitSet, cards)
-    probSwitch.probSwitcher(choice, nums, numSet, suits, suitSet, ranks, cards)
+    all = []
+    all.append(f"{round(findPairProb.findProb(nums, ranks), 6) * 100}%")
+    all.append(f"{round(findTwoPairProb.findProb(nums, numSet, ranks), 6) * 100}%")
+    all.append(f"{round(findThreeKindProb.findProb(nums, numSet, ranks), 6) * 100}%")
+    all.append(f"{round(findStraightProb.findProb(nums, ranks), 6) * 100}%")
+    all.append(f"{round(findFlushProb.findProb(suits, suitSet, ranks), 6) * 100}%")
+    all.append(f"{round(findFullHouseProb.findProb(nums, ranks), 6) * 100}%")
+    all.append(f"{round(findFourKindProb.findProb(nums, numSet, ranks), 6) * 100}%")
+    all.append(f"{round(findStraightFlushProb.findProb(cards, suits, suitSet, ranks), 6) * 100}%")
+    all.append(f"{round(findRoyalFlushProb.findProb(cards, ranks), 6) * 100}%")
+    print()
+    return all
 
 
 def check_ranks(nums, numSet, suits, suitSet, cards):
