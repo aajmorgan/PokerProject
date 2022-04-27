@@ -12,7 +12,7 @@ def findProb(cards, cardSet, ranks):
             elif "threeKind" in ranks:
                 prob = needOne
             elif "twoPair" in ranks:
-                prob = needTwo * 2
+                prob = needTwo + needTwo
             elif "pair" in ranks:
                 prob = needTwo
             else:
