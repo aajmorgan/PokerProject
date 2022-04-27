@@ -6,22 +6,23 @@ MAXSUIT = 13
 def findProb(suits, suitSet, ranks):
     if "flush" in ranks:
         return 1
+    elif "fourKind" in ranks:
+        return 0
     else:
         cards_to_be_flipped = RIVERMAX - len(suits)
-        total = 0
+        denom = DECKLENGTH - len(suits)
         for s in suitSet:
             c = suits.count(s)
-            t1 = 1 if cards_to_be_flipped == 1 else (MAXSUIT - c - 1) / (DECKLENGTH - len(suits) - 1)
-            t2 = 0 if cards_to_be_flipped == 1 else (MAXSUIT - c) / (DECKLENGTH - len(suits) - 1)
-            t2 *= (DECKLENGTH - MAXSUIT - (len(suits) - c)) / (DECKLENGTH - len(suits))
-            if c == FLUSH - cards_to_be_flipped:
-                total = (MAXSUIT - c) / (DECKLENGTH - len(suits)) * t1
-                break
-            elif c > FLUSH - cards_to_be_flipped:
-                total = (MAXSUIT - c) / (DECKLENGTH - len(suits)) * ((DECKLENGTH - MAXSUIT - (len(suits) - c)) / (DECKLENGTH - len(suits) - 1))
-                total += t2
-                break
-        return total
+            if c >= (FLUSH - cards_to_be_flipped):
+                if cards_to_be_flipped == 2:
+                    temp1 = 1 if c == 4 else (MAXSUIT - c - 1) / (denom - 1)
+                    total = (MAXSUIT - c) / denom * temp1
+                    temp2 = 0 if c == 3 else ((denom - (MAXSUIT - c)) / denom) * ((MAXSUIT - c) / (denom - 1))
+                    return total + temp2
+                else:
+                    total = (MAXSUIT - c) / denom
+                    return total
+        return 0
 
 '''
 #testing 
