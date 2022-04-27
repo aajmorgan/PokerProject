@@ -18,7 +18,7 @@ def findProb(cards, cardSet, ranks):
             else:
                 return -1  # Should not be able to return this
            return prob
-        else:  # 6 cards
+         else:  # 6 cards
             if "threeKind" not in ranks:
                 return 0
             prob = 1 / 46
