@@ -42,6 +42,9 @@ class Poker:
         self.hand = [self.deck.give_first_card(), self.deck.give_first_card()]
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
         self.surface = surface
+        self.names = {"Pair": "0%", "Two Pair": "0%", "Three of a Kind": "0%", "Straight": "0%", 
+                        "Flush": "0%", "Full House": "0%", "Four of a Kind": "0%", "Straight Flush": "0%",
+                        "Royal Flush": "0%"}
         self.surface.fill(0x35654D)
         pygame.event.set_blocked(None)
         pygame.event.set_allowed([pygame.KEYDOWN, pygame.QUIT, pygame.MOUSEBUTTONDOWN])
@@ -145,16 +148,18 @@ class Poker:
         elif choice == 12:
             self.inputCards()
         else:
-            self.get_probability(choice)
+            probs = self.get_probability()
+            for i, k in enumerate(self.names):
+                self.names[k] = probs[i]
+            print(self.names)
         return False
 
     @staticmethod
     def num_trials(err=.01, prob=.05):
         # Use chebyshev to find
         trials = math.ceil(.25/((err ** 2) * prob))
-        print(trials)
         return trials
-    
+
     def inputCards(self):
         while True:
             try:
@@ -285,8 +290,8 @@ class Poker:
         numSet = set(nums)
         return analyzeCards.check_ranks(nums, numSet, suits, suitSet, cards)
 
-    def get_probability(self, choice):
-        analyzeCards.findProbabilities(choice, self.hand + self.river)
+    def get_probability(self):
+        return analyzeCards.findProbabilities(self.hand + self.river)
 
 
 def main():
