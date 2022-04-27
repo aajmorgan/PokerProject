@@ -98,7 +98,6 @@ def calculatePair(cards, c):
         total = (unmatchedCards * ((NUMS - 1) / denom)) + \
                 ((denom - (unmatchedCards * 3)) / denom) * ((unmatchedCards * 3) / (denom - 1)) + \
                 (((denom - (unmatchedCards * 3) - left) / denom) * (3 / (denom - 1)))
-        print(total, (unmatchedCards * ((NUMS - 1) / denom)),  ((denom - (unmatchedCards * 3)) / denom) * ((unmatchedCards * 3) / (denom - 1)), (((denom - (unmatchedCards * 3) - left) / denom) * (3 / (denom - 1))))
     else:
         total = unmatchedCards * (NUMS - 1) / denom
     return total
