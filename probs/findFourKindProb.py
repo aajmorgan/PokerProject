@@ -17,6 +17,7 @@ def findProb(cards, cardSet, ranks):
                 prob = needTwo
             else:
                 return -1  # Should not be able to return this
+           return prob
         else:  # 6 cards
             if "threeKind" not in ranks:
                 return 0
