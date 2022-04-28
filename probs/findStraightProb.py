@@ -1,7 +1,7 @@
-import deck_of_cards
 DECKLENGTH = 52
+
 def findProb(cards, ranks, straightFlush=0):
-    SUITS = 4 if straightFlush == 0 else 1
+    suits = 4 if straightFlush == 0 else 1
     if "straight" in ranks:
         return 1
     elif "fourKind" in ranks:
@@ -10,63 +10,45 @@ def findProb(cards, ranks, straightFlush=0):
         return 0
     else:
         prob = 0
-        poss_cards = 0
-        poss_cards_b = 0
         num_cards = len(cards) if straightFlush == 0 else straightFlush
-        numsNoDups = set(sorted(cards))
-        sorted_cards = list(numsNoDups)
-        for num in sorted_cards:
-            if num == 1:
-                sorted_cards.remove(1)
-                sorted_cards.append(14)
         denom = DECKLENGTH - num_cards
-        formula = ((poss_cards*SUITS)/denom)*(((poss_cards -1)*SUITS)/(denom-1))
-        otherform = ((poss_cards_b*SUITS)/denom)*((poss_cards_b*(SUITS-1))*(denom-1))
-        index = 0
-        cardseq = 0
-        everyother = 0
-        length = len(sorted_cards)
-        for card in sorted_cards:
-            if index+1 > length-1:
-                break
-            nextcard = sorted_cards[index+1]
-            if nextcard == card -1:
-                cardseq += 1
-            if nextcard == card-2:
-                everyother += 1
-            index += 1
+        cardsThatWork = []
+        cardPairs = []
+        for i in range(2, 15):
+            cardsCopy = cards[:]
+            cardsCopy.append(i)
+            if checkStraight(cardsCopy):
+                cardsThatWork.append(i)
         if num_cards == 5:
-            if cardseq <= 2:
-                prob = 0
-            #need 2 on one side, 2 on other side, 1 on each side
-            if cardseq == 3:
-                poss_cards = 2
-                prob = 3*formula
-            #need 1(can be on either side), 2 on one side, 2 on other side
-            if cardseq == 4:
-                poss_cards = 2
-                poss_cards_b = 1
-                prob = 2*formula + 2*otherform
-            #need 1 in gap with 1 on one side, 1 in gap 1 on other side
-            if cardseq == 2 and everyother == 1:
-                poss_cards_b = 1
-                prob = otherform
-            #need 1 in gap, 2 on one side, 1 in gap 1 on other side 
-            if cardseq == 3 and everyother == 1:
-                poss_cards = 2
-                poss_cards_b = 1
-                prob = 2*formula + otherform
-        #if 6 cards 
-        else:
-            num_cards = 6
-            if cardseq <= 3:
-                prob = 0
-            #need 1 on either side 
-            if cardseq == 4:
-                poss_cards = 2
-                prob = formula
-            #need 1 in gap
-            if cardseq == 3 and everyother == 1:
-                poss_cards_b = 1
-                prob = otherform
-    return prob
+            for i in range(2, 14):
+                for j in range(i, 15):
+                    if i not in cardsThatWork or j not in cardsThatWork:
+                        cardsCopy = cards[:]
+                        cardsCopy.append(i)
+                        cardsCopy.append(j)
+                        if checkStraight(cardsCopy):
+                            cardPairs.append([i, j])
+            numSet = set()
+            for pair in cardPairs:
+                for num in pair:
+                    numSet.add(num)
+        temp = 0 if num_cards == 6 else (denom - suits) / (denom) * (suits / (denom - 1))
+        prob += len(cardsThatWork) * ((suits/denom) + temp)
+
+
+def checkStraight(cards):
+    numsNoDups = sorted(cards)
+    for num in numsNoDups:
+        if num == 1:
+            numsNoDups.remove(1)
+            numsNoDups.append(14)
+    numsNoDups = sorted(numsNoDups)
+    if len(numsNoDups) >= 5:
+        numsNoDups.reverse()
+        for i in range(len(numsNoDups) - 4):
+            if (numsNoDups[i] - 1) == numsNoDups[i + 1]:
+                if (numsNoDups[i] - 2) == numsNoDups[i + 2]:
+                    if (numsNoDups[i] - 3) == numsNoDups[i + 3]:
+                        if (numsNoDups[i] - 4) == numsNoDups[i + 4]:
+                            return True
+    return False
