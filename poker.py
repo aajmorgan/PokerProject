@@ -12,6 +12,7 @@ KEYS = {
     pygame.K_SPACE: 1,
     pygame.K_m: 2
 }
+SUITLIST = ["s", "h", "d", "c"]
 
 BUTTONWIDTH, BUTTONHEIGHT, DISPLAYHEIGHT = 170, 80, 160
 
@@ -232,28 +233,28 @@ class Poker:
                 print("Invalid input. Try again")
         newDeck = []
         print("\nRanks. 11=Jack, 12=Queen, 13=King, 1=Ace")
-        print("Suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs\n")
+        print("Suit. s=spades, h=hearts, d=diamonds, c=clubs\n")
         while len(newDeck) < num_cards:
             while True:
-                print("Type in rank suit (ex: 11 2 for Jack of diamonds)")
+                print("Type in rank suit (ex: 11 d for Jack of diamonds)")
                 inputList = input().split()
                 while len(inputList) != 2:
                     print("Invalid input length. Try again")
                     inputList = input().split()
-                suit = inputList[1]
+                suit = inputList[1].lower()
                 rank = inputList[0]
                 try:
-                    suit = int(suit)
                     rank = int(rank)
                     break
                 except ValueError:
                     print("\nInvalid input. Type in numbers")
-            if suit not in range(0, 4):
-                print("\nInvalid suit. 0=spades, 1=hearts, 2=diamonds, 3=clubs")
+            if suit not in SUITLIST:
+                print("\nInvalid suit. s=spades, h=hearts, d=diamonds, c=clubs")
             elif rank not in range(1, 14):
                 print("\nInvalid rank. 11=Jack, 12=Queen, 13=King, 1=Ace")
             else:
-                card = deck_of_cards.Card((suit, rank))
+                intSuit = SUITLIST.index(suit)
+                card = deck_of_cards.Card((intSuit, rank))
                 if card not in newDeck:
                     newDeck.append(card)
                     print(card.name)
@@ -282,7 +283,6 @@ class Poker:
         pygame.display.update()
 
     def simulate(self):
-        print("\nSimulating...\n")
         text = font.render("     Simulating...     ", True, BLACK, BUTTONCOLOR)
         textRect = text.get_rect()
         textRect.center = self.buttons[10].center
@@ -383,7 +383,6 @@ class Poker:
         probs = analyzeCards.findProbabilities(self.hand + self.river)
         for i, k in enumerate(self.names):
             self.names[k] = probs[i]
-        print(self.names)
 
     def final_dictionary(self):
         hand_ranks = self.check_ranks()
@@ -392,8 +391,6 @@ class Poker:
                 self.names[k] = "100%"
             else:
                 self.names[k] = "0%"
-        print()
-        print(self.names)
 
 
 def main():
