@@ -24,6 +24,18 @@ KEYS = {
 
 BUTTONWIDTH, BUTTONHEIGHT = 170, 80
 
+CONVERSION = {
+        "Pair": "pair",
+        "Two Pair": "twoPair",
+        "Three of a Kind": "threeKind",
+        "Straight": "straight",
+        "Flush": "flush",
+        "Full House": "fullHouse",
+        "Four of a Kind": "fourKind",
+        "Straight Flush": "straightFlus",
+        "Royal Flush": "royalFlush"
+    }
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 font = pygame.font.SysFont("arial", 20)
@@ -101,6 +113,7 @@ class Poker:
         running = True
         choice = None
         self.drawFirstFive()
+        self.get_probability()
         while running:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
@@ -141,17 +154,15 @@ class Poker:
             self.river.append(self.deck.give_first_card())
             if len(self.river) == 4:
                 self.draw_card(self.river[3], (572, 425))
+                self.get_probability()
             if len(self.river) == 5:
                 self.draw_card(self.river[4], (698, 425))
+                self.final_dictionary()
         elif choice == 11:
             self.simulate()
         elif choice == 12:
             self.inputCards()
-        else:
-            probs = self.get_probability()
-            for i, k in enumerate(self.names):
-                self.names[k] = probs[i]
-            print(self.names)
+            
         return False
 
     @staticmethod
@@ -218,6 +229,7 @@ class Poker:
         self.drawFirstFive()
         if num_cards == 6:
             self.draw_card(self.river[3], (572, 425))
+        self.get_probability()
         pygame.display.update()
 
     def simulate(self):
@@ -291,7 +303,20 @@ class Poker:
         return analyzeCards.check_ranks(nums, numSet, suits, suitSet, cards)
 
     def get_probability(self):
-        return analyzeCards.findProbabilities(self.hand + self.river)
+        probs = analyzeCards.findProbabilities(self.hand + self.river)
+        for i, k in enumerate(self.names):
+            self.names[k] = probs[i]
+        print(self.names)
+
+    def final_dictionary(self):
+        hand_ranks = self.check_ranks()
+        for k in self.names:
+            if CONVERSION[k] in hand_ranks:
+                self.names[k] = "100%"
+            else:
+                self.names[k] = "0%"
+        print()
+        print(self.names)
 
 
 def main():
