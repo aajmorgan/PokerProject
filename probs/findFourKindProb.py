@@ -4,7 +4,7 @@ def findProb(cards, cardSet, ranks):
     else:
         if "pair" not in ranks:
             return 0
-        needTwo = 2/47 + 1/46
+        needTwo = 2/47 * 1/46
         needOne = 1/47 + 46/47 * 1/46
         if len(cards) == 5:
             if "fullHouse" in ranks:
