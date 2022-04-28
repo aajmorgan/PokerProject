@@ -8,36 +8,29 @@ import analyzeCards
 pygame.font.init()
 
 KEYS = {
-    pygame.K_1: 1,
-    pygame.K_2: 2,
-    pygame.K_3: 3,
-    pygame.K_4: 4,
-    pygame.K_5: 5,
-    pygame.K_6: 6,
-    pygame.K_7: 7,
-    pygame.K_8: 8,
-    pygame.K_9: 9,
-    pygame.K_SPACE: 10,
-    pygame.K_0: 11,
-    pygame.K_e: 12
+    pygame.K_RETURN: 0,
+    pygame.K_SPACE: 1,
+    pygame.K_m: 2
 }
 
-BUTTONWIDTH, BUTTONHEIGHT = 170, 80
+BUTTONWIDTH, BUTTONHEIGHT, DISPLAYHEIGHT = 170, 80, 160
 
 CONVERSION = {
-        "Pair": "pair",
-        "Two Pair": "twoPair",
-        "Three of a Kind": "threeKind",
-        "Straight": "straight",
-        "Flush": "flush",
-        "Full House": "fullHouse",
-        "Four of a Kind": "fourKind",
-        "Straight Flush": "straightFlus",
-        "Royal Flush": "royalFlush"
-    }
+    "Pair": "pair",
+    "Two Pair": "twoPair",
+    "Three of a Kind": "threeKind",
+    "Straight": "straight",
+    "Flush": "flush",
+    "Full House": "fullHouse",
+    "Four of a Kind": "fourKind",
+    "Straight Flush": "straightFlus",
+    "Royal Flush": "royalFlush"
+}
 
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+BUTTONCOLOR = (255, 255, 255)
+DISPLAYCOLOR = (150, 200, 200)
+POKERGREEN =  0x35654D
 font = pygame.font.SysFont("arial", 20)
 
 
@@ -50,52 +43,107 @@ def set_deck():
 
 class Poker:
     def __init__(self, surface):
+        self.drawSim = False
         self.deck = set_deck()
         self.hand = [self.deck.give_first_card(), self.deck.give_first_card()]
         self.river = [self.deck.give_first_card(), self.deck.give_first_card(), self.deck.give_first_card()]
         self.surface = surface
-        self.names = {"Pair": "0%", "Two Pair": "0%", "Three of a Kind": "0%", "Straight": "0%", 
-                        "Flush": "0%", "Full House": "0%", "Four of a Kind": "0%", "Straight Flush": "0%",
-                        "Royal Flush": "0%"}
-        self.surface.fill(0x35654D)
+        self.names = {"Pair": "0%", "Two Pair": "0%", "Three of a Kind": "0%", "Straight": "0%",
+                      "Flush": "0%", "Full House": "0%", "Four of a Kind": "0%", "Straight Flush": "0%",
+                      "Royal Flush": "0%"}
+        self.counts = {
+            "pair": 0,
+            "twoPair": 0,
+            "threeKind": 0,
+            "straight": 0,
+            "flush": 0,
+            "fullHouse": 0,
+            "fourKind": 0,
+            "straightFlush": 0,
+            "royalFlush": 0
+        }
+        self.bests = {
+            "highCard": 0,
+            "pair": 0,
+            "twoPair": 0,
+            "threeKind": 0,
+            "straight": 0,
+            "flush": 0,
+            "fullHouse": 0,
+            "fourKind": 0,
+            "straightFlush": 0,
+            "royalFlush": 0
+        }
+        self.surface.fill(POKERGREEN)
         pygame.event.set_blocked(None)
         pygame.event.set_allowed([pygame.KEYDOWN, pygame.QUIT, pygame.MOUSEBUTTONDOWN])
         self.buttons = []
         for j in range(4):
             for i in range(3):
-                self.buttons.append(pygame.Rect(i * 400 + 15, j * 100 + 15, BUTTONWIDTH, BUTTONHEIGHT))
+                if j != 3:
+                    self.buttons.append(pygame.Rect(i * 400 + 15, j * 170 + 15, BUTTONWIDTH, DISPLAYHEIGHT))
+                else:
+                    self.buttons.append(pygame.Rect(i * 400 + 15, j * 170 + 15, BUTTONWIDTH, BUTTONHEIGHT))
         pygame.display.update()
-        self.buttonTexts = ["(1) Pair", "(2) Two Pair", "(3) Three of a Kind", "(4) Straight", "(5) Flush",
-                            "(6) Full House", "(7) Four of a Kind", "(8) Straight Flush", "(9) Royal Flush",
-                            "(Space) Next Card", "(0) Simulate", "(e) Choose Card"]
+        self.buttonTexts = ["Pair", "Two Pair", "Three of a Kind", "Straight", "Flush",
+                            "Full House", "Four of a Kind", "Straight Flush", "Royal Flush",
+                            "(Return) Next Card", "(Space) Simulate", "(m) Choose Card"]
 
-    def checkMouse(self, mouse):
-        # check where mouse is clicked, see which action to perform
-        gotButton = False
+    @staticmethod
+    def checkMouse(mouse):
         button = None
-        for j in range(4):
-            for i in range(3):
-                left = i * 400 + 15
-                top = j * 100 + 15
-                if (mouse[0] in range(left, left + BUTTONWIDTH)) and (mouse[1] in range(top, top + BUTTONHEIGHT)):
-                    button = j * 3 + i + 1
-                    gotButton = True
-                    break
-            if gotButton:
+        for i in range(3):
+            left = i * 400 + 15
+            top = 570
+            if (mouse[0] in range(left, left + BUTTONWIDTH)) and (mouse[1] in range(top, top + BUTTONHEIGHT)):
+                button = i
                 break
         return button
 
     def drawFirstFive(self):
         self.draw_card(self.hand[0], (385, 800))
         self.draw_card(self.hand[1], (510, 800))
-        self.draw_card(self.river[0], (200, 425))
-        self.draw_card(self.river[1], (324, 425))
-        self.draw_card(self.river[2], (448, 425))
+        self.draw_card(self.river[0], (200, 630))
+        self.draw_card(self.river[1], (324, 630))
+        self.draw_card(self.river[2], (448, 630))
+        self.drawPercentages()
+        pygame.display.update()
+
+    def drawButtons(self):
         for i, button in enumerate(self.buttons):
-            pygame.draw.rect(self.surface, WHITE, button)
-            text = font.render(f"{self.buttonTexts[i]}", True, BLACK, WHITE)
+            color = BUTTONCOLOR if i >= 9 else DISPLAYCOLOR
+            pygame.draw.rect(self.surface, color, button)
+            text = font.render(f"{self.buttonTexts[i]}", True, BLACK, color)
             textRect = text.get_rect()
             textRect.center = button.center
+            if i < 9:
+                textRect.top -= 60
+                breakText = font.render("______________", True, BLACK, color)
+                breakTextRect = breakText.get_rect()
+                breakTextRect.center = button.center
+                breakTextRect.top -= 10
+                self.surface.blit(breakText, breakTextRect)
+                if not self.drawSim:
+                    simText = font.render("TotalSim%", True, BLACK, color)
+                    simTextRect = simText.get_rect()
+                    simTextRect.center = button.center
+                    simTextRect.top += 20
+                    self.surface.blit(simText, simTextRect)
+                    bestHand = font.render("BestSim%", True, BLACK, color)
+                    bestHandRect = bestHand.get_rect()
+                    bestHandRect.center = button.center
+                    bestHandRect.top += 60
+                    self.surface.blit(bestHand, bestHandRect)
+            self.surface.blit(text, textRect)
+
+    def drawPercentages(self):
+        if not self.drawSim:
+            self.drawButtons()
+        for i, name in enumerate(self.names):
+            text = font.render(f"{self.names[name]}", True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = self.buttons[i].center
+            textRect.top -= 20
             self.surface.blit(text, textRect)
         pygame.display.update()
 
@@ -112,8 +160,8 @@ class Poker:
     def play(self):
         running = True
         choice = None
-        self.drawFirstFive()
         self.get_probability()
+        self.drawFirstFive()
         while running:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
@@ -128,7 +176,7 @@ class Poker:
             if len(self.river) == 5:
                 running = False
                 self.final_result()
-        print("Press Space to play again, or q to quit.\n")
+        print("Press Return to play again, or q to quit.\n")
         askNextGame = True
         while askNextGame:
             event = pygame.event.wait()
@@ -139,7 +187,7 @@ class Poker:
                 if event.key == pygame.K_q:
                     pygame.quit()
                     quit()
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_RETURN:
                     askNextGame = False
 
     def draw_card(self, card, coords):
@@ -150,25 +198,26 @@ class Poker:
         pygame.display.update()
 
     def doChoice(self, choice):
-        if choice == 10 and len(self.river) < 5:
+        if choice == 0 and len(self.river) < 5:
             self.river.append(self.deck.give_first_card())
             if len(self.river) == 4:
-                self.draw_card(self.river[3], (572, 425))
+                self.draw_card(self.river[3], (572, 630))
                 self.get_probability()
             if len(self.river) == 5:
-                self.draw_card(self.river[4], (698, 425))
+                self.draw_card(self.river[4], (698, 630))
                 self.final_dictionary()
-        elif choice == 11:
+            self.drawPercentages()
+        elif choice == 1:
             self.simulate()
-        elif choice == 12:
+        elif choice == 2:
             self.inputCards()
-            
+
         return False
 
     @staticmethod
     def num_trials(err=.01, prob=.05):
         # Use chebyshev to find
-        trials = math.ceil(.25/((err ** 2) * prob))
+        trials = math.ceil(.25 / ((err ** 2) * prob))
         return trials
 
     def inputCards(self):
@@ -234,9 +283,14 @@ class Poker:
 
     def simulate(self):
         print("\nSimulating...\n")
+        text = font.render("     Simulating...     ", True, BLACK, BUTTONCOLOR)
+        textRect = text.get_rect()
+        textRect.center = self.buttons[10].center
+        self.surface.blit(text, textRect)
+        pygame.display.update()
         trials = self.num_trials()
         cards = self.hand + self.river
-        counts = {
+        self.counts = {
             "pair": 0,
             "twoPair": 0,
             "threeKind": 0,
@@ -247,7 +301,7 @@ class Poker:
             "straightFlush": 0,
             "royalFlush": 0
         }
-        bests = {
+        self.bests = {
             "highCard": 0,
             "pair": 0,
             "twoPair": 0,
@@ -259,26 +313,49 @@ class Poker:
             "straightFlush": 0,
             "royalFlush": 0
         }
+        # Monte Carlo
         for i in range(trials):
             num_new_cards = 7 - len(cards)
             for j in range(num_new_cards):
                 cards.append(self.deck.give_first_card())
             ranks = self.check_ranks(cards=cards)
             if len(ranks) == 0:
-                bests["highCard"] += 1
+                self.bests["highCard"] += 1
             else:
-                bests[ranks[-1]] += 1
+                self.bests[ranks[-1]] += 1
                 for rank in ranks:
-                    counts[rank] += 1
+                    self.counts[rank] += 1
             for j in range(num_new_cards):
                 self.deck.take_card(cards.pop())
             self.deck.shuffle_deck()
-        for card in counts:
-            counts[card] = f'{round((counts[card] / trials) * 100, 5)} %'
-        for card in bests:
-            bests[card] = f'{round((bests[card] / trials) * 100, 5)} %'
-        print("Counts:", counts)
-        print("Bests:", bests)
+        for card in self.counts:
+            self.counts[card] = f'{round((self.counts[card] / trials) * 100, 6)} %'
+        for card in self.bests:
+            self.bests[card] = f'{round((self.bests[card] / trials) * 100, 6)} %'
+        self.drawSimulation()
+        text = font.render("(Space) Simulate", True, BLACK, BUTTONCOLOR)
+        textRect = text.get_rect()
+        textRect.center = self.buttons[10].center
+        self.surface.blit(text, textRect)
+        pygame.display.update()
+
+    def drawSimulation(self):
+        self.drawSim = True
+        self.drawButtons()
+        for i, name in enumerate(self.counts):
+            countText = font.render(f"{self.counts[name]}", True, BLACK, DISPLAYCOLOR)
+            bestText = font.render(f"{self.bests[name]}", True, BLACK, DISPLAYCOLOR)
+            countTextRect = countText.get_rect()
+            bestTextRect = bestText.get_rect()
+            countTextRect.center = self.buttons[i].center
+            bestTextRect.center = self.buttons[i].center
+            countTextRect.top += 20
+            bestTextRect.top += 60
+            self.surface.blit(countText, countTextRect)
+            self.surface.blit(bestText, bestTextRect)
+        self.drawPercentages()
+        pygame.display.update()
+        self.drawSim = False
 
     def final_result(self):
         hand_ranks = self.check_ranks()
@@ -323,7 +400,6 @@ def main():
     pygame.init()
     surface = pygame.display.set_mode((1000, 1000))
     pygame.display.set_caption("Poker")
-    # add while loop to make it so you can play again
     playing = True
     poker = Poker(surface)
     while playing:
