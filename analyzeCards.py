@@ -1,6 +1,7 @@
 from probs import findFlushProb, findFourKindProb, findFullHouseProb, findPairProb, findRoyalFlushProb, \
     findStraightFlushProb, findStraightProb, findThreeKindProb, findTwoPairProb
 
+
 def findProbabilities(cards):
     nums = []
     suits = []
@@ -10,18 +11,17 @@ def findProbabilities(cards):
     suitSet = set(suits)
     numSet = set(nums)
     ranks = check_ranks(nums, numSet, suits, suitSet, cards)
-    all = []
-    all.append(f"{round(findPairProb.findProb(nums, ranks), 6) * 100}%")
-    all.append(f"{round(findTwoPairProb.findProb(nums, numSet, ranks), 6) * 100}%")
-    all.append(f"{round(findThreeKindProb.findProb(nums, numSet, ranks), 6) * 100}%")
-    all.append(f"{round(findStraightProb.findProb(nums, ranks), 6) * 100}%")
-    all.append(f"{round(findFlushProb.findProb(suits, suitSet, ranks), 6) * 100}%")
-    all.append(f"{round(findFullHouseProb.findProb(nums, ranks), 6) * 100}%")
-    all.append(f"{round(findFourKindProb.findProb(nums, numSet, ranks), 6) * 100}%")
-    all.append(f"{round(findStraightFlushProb.findProb(cards, suits, suitSet, ranks), 6) * 100}%")
-    all.append(f"{round(findRoyalFlushProb.findProb(cards, ranks), 6) * 100}%")
+    allProbs = [f"{round(findPairProb.findProb(nums, ranks) * 100, 6)}%",
+                f"{round(findTwoPairProb.findProb(nums, numSet, ranks) * 100, 6)}%",
+                f"{round(findThreeKindProb.findProb(nums, numSet, ranks) * 100, 6)}%",
+                f"{round(findStraightProb.findProb(nums, ranks) * 100, 6)}%",
+                f"{round(findFlushProb.findProb(suits, suitSet, ranks) * 100, 6)}%",
+                f"{round(findFullHouseProb.findProb(nums, ranks) * 100, 6)}%",
+                f"{round(findFourKindProb.findProb(nums, numSet, ranks) * 100, 6)}%",
+                f"{round(findStraightFlushProb.findProb(cards, suits, suitSet, ranks) * 100, 6)}%",
+                f"{round(findRoyalFlushProb.findProb(cards, ranks) * 100, 6)}%"]
     print()
-    return all
+    return allProbs
 
 
 def check_ranks(nums, numSet, suits, suitSet, cards):
