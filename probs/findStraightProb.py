@@ -8,44 +8,62 @@ def findProb(cards, ranks, straightFlush=0):
         return 0
     else:
         prob = 0
+        poss_cards = 0
+        poss_cards_b = 0
         num_cards = len(cards) if straightFlush == 0 else straightFlush
-        sorted_cards = sorted(cards)
+        numsNoDups = set(sorted(cards))
+        sorted_cards = list(numsNoDups)
+        for num in sorted_cards:
+            if num == 1:
+                sorted_cards.remove(1)
+                sorted_cards.append(14)
         denom = DECKLENGTH - num_cards
+        formula = ((poss_cards*SUITS)/denom)*(((poss_cards -1)*SUITS)/(denom-1))
+        otherform = ((poss_cards_b*SUITS)/denom)*((poss_cards_b*(SUITS-1))*(denom-1))
+        for card in sorted_cards:
+            index = 0
+            cardseq = 0
+            everyother = 0
+            curcard = card
+            nextcard = sorted_cards[index+1]
+            if nextcard == curcard -1:
+                cardseq += 1
+            if nextcard == curcard-2:
+                everyother += 1
+            index += 1
         if num_cards == 5:
-            poss_cards = 0
-            #4 in a row already, can be in 2 places 
-            if (sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4:
+            if cardseq <= 2:
+                prob = 0
+            #need 2 on one side, 2 on other side, 1 on each side
+            if cardseq == 3:
                 poss_cards = 2
-                prob = (poss_cards*SUITS)/(denom-1)
-            #3 in a row already, can be in 2 places
-            if (sorted_cards[2] - sorted_cards[0] + 1) == 3 or (sorted_cards[4] - sorted_cards[2] + 1) == 3 or (sorted_cards[3] - sorted_cards[1] + 1) == 3:
+                prob = 3*formula
+            #need 1(can be on either side), 2 on one side, 2 on other side
+            if cardseq == 4:
                 poss_cards = 2
-                prob = (poss_cards*SUITS)/denom * ((poss_cards-1)*SUITS)/(denom-1)
-            #2 in a row already with 1 card one num away, can be in 3 places
-            if "twoKind" in ranks and (sorted_cards[1] - sorted_cards[0] == 2 or sorted_cards[2] - sorted_cards[1] == 2 or sorted_cards[3] - sorted_cards[2] == 2 or sorted_cards[4] - sorted_cards[3] == 2):
-                poss_cards = 3
-                prob = (poss_cards*SUITS)/denom
-            #if its 4 consecutive even or odd numbers - then the next 2 could fill it in
-            if (sorted_cards[1] - sorted_cards[0] == 2 or sorted_cards[3] - sorted_cards[2] == 2) or (sorted_cards[4] - sorted_cards[3] == 2 or sorted_cards[3] - sorted_cards[2] == 2) or (sorted_cards[1] - sorted_cards[0] == 2 or sorted_cards[4] - sorted_cards[3] == 2):
-                poss_cards = 2 
-                prob = (poss_cards*SUITS)/(denom-1)
-            #special cases for 10 and 2 bc of the ace, can only be in 1 place
-            if (sorted_cards[0] == 10 or sorted_cars[0] == 2) and ((sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4):
-                poss_cards = 1
-                prob = (SUITS*poss_cards)/denom
+                poss_cards_b = 1
+                prob = 2*formula + 2*otherform
+            #need 1 in gap with 1 on one side, 1 in gap 1 on other side
+            if cardseq == 2 and everyother == 1:
+                poss_cards_b = 1
+                prob = otherform
+            #need 1 in gap, 2 on one side, 1 in gap 1 on other side 
+            if cardseq == 3 and everyother == 1:
+                poss_cards = 2
+                poss_cards_b = 1
+                prob = 2*formula + otherform
         #if 6 cards 
         else:
-            if "threeKind" in ranks:
-                return 0
-            #4 in a row already, can be in 2 places 
-            if (sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4 or (sorted_cards[5] - sorted_cards[2] + 1) == 4:
-                poss_cards = 2 
-                prob = (poss_cards*SUITS)/(denom-1)
-            #special cases for 10 and 2 bc of the ace
-            if (sorted_cards[0] == 10 or sorted_cars[0] == 2) and ((sorted_cards[3] - sorted_cards[0] + 1) == 4 or (sorted_cards[4] - sorted_cards[1] + 1) == 4):
-                poss_cards = 1
-                prob = (SUITS*poss_cards)/denom
-            #if 3 in a row or less, no chance of getting a straight 
-            else:
-                prob = 0   
+            num_cards = 6
+            if cardseq <= 3:
+                prob = 0
+            #need 1 on either side 
+            if cardseq == 4:
+                poss_cards = 2
+                prob = formula
+            #need 1 in gap
+            if cardseq == 3 and everyother == 1:
+                poss_cards_b = 1
+                prob = otherform
         return prob
+
