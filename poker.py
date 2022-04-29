@@ -396,7 +396,7 @@ class Poker:
 def main():
     pygame.init()
     surface = pygame.display.set_mode((1000, 1000))
-    pygame.display.set_caption("Poker")
+    pygame.display.set_caption("All In")
     playing = True
     poker = Poker(surface)
     while playing:
