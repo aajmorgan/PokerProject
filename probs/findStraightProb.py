@@ -19,21 +19,33 @@ def findProb(cards, ranks, straightFlush=0):
             cardsCopy.append(i)
             if checkStraight(cardsCopy):
                 cardsThatWork.append(i)
+        print("cardsthatwork", cardsThatWork)
         if num_cards == 5:
             for i in range(2, 14):
                 for j in range(i, 15):
-                    if i not in cardsThatWork or j not in cardsThatWork:
+                    if i not in cardsThatWork and j not in cardsThatWork:
                         cardsCopy = cards[:]
                         cardsCopy.append(i)
                         cardsCopy.append(j)
                         if checkStraight(cardsCopy):
                             cardPairs.append([i, j])
-            numSet = set()
+            nums = []
             for pair in cardPairs:
                 for num in pair:
-                    numSet.add(num)
+                    nums.append(num)
+            numSet = set(nums)
+            print("nums", nums)
+            print('numSet', numSet)
+            temp1 =  (suits / denom) * (suits / (denom - 1))
+            temp2 = 0
+            for card in numSet:
+                temp2 += nums.count(card) 
+            prob += temp1 * temp2
+            print(prob)
         temp = 0 if num_cards == 6 else (denom - suits) / (denom) * (suits / (denom - 1))
         prob += len(cardsThatWork) * ((suits/denom) + temp)
+        
+        return prob
 
 
 def checkStraight(cards):
