@@ -24,7 +24,7 @@ CONVERSION = {
     "Flush": "flush",
     "Full House": "fullHouse",
     "Four of a Kind": "fourKind",
-    "Straight Flush": "straightFlus",
+    "Straight Flush": "straightFlush",
     "Royal Flush": "royalFlush"
 }
 
@@ -33,12 +33,13 @@ BUTTONCOLOR = (255, 255, 255)
 DISPLAYCOLOR = (150, 200, 200)
 POKERGREEN =  0x35654D
 font = pygame.font.SysFont("arial", 20)
+winFont = pygame.font.SysFont("arial", 33)
 
 
 # Returns a shuffled deck of cards
 def set_deck():
     deck_obj = deck_of_cards.DeckOfCards()
-    deck_obj.shuffle_deck()
+    deck_obj.shuffle_deck() 
     return deck_obj
 
 
@@ -171,6 +172,7 @@ class Poker:
             elif event.type == pygame.KEYDOWN:
                 choice = self.getKey(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                print(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 choice = self.checkMouse(pygame.mouse.get_pos())
             if choice is not None:
                 self.doChoice(choice)
@@ -179,6 +181,11 @@ class Poker:
                 self.final_result()
         print("Press Return to play again, or q to quit.\n")
         askNextGame = True
+        winText = winFont.render(f'You got {self.hand_ranks[-1]}', False, BUTTONCOLOR)
+        winRect = winText.get_rect()
+        winRect.topleft = (195 - (winText.get_width() // 2), 860)
+        self.surface.blit(winText, winRect)
+        pygame.display.update()
         while askNextGame:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
@@ -358,14 +365,20 @@ class Poker:
         self.drawSim = False
 
     def final_result(self):
-        hand_ranks = self.check_ranks()
-        if len(hand_ranks) == 0:
+        self.hand_ranks = self.check_ranks()
+        if len(self.hand_ranks) == 0:
+            self.hand_ranks = ["High card"]
             print("High card.")
         else:
             # need to choose best hand and print that
             # best_hand = choose_best(hand_ranks)
-            print(hand_ranks)
-            print(f"You got a {hand_ranks[-1]}!")
+            for k in CONVERSION:
+                if CONVERSION[k] == self.hand_ranks[-1]:
+                    self.hand_ranks[-1] = k
+                    break
+            self.hand_ranks[-1] = f'a {self.hand_ranks[-1]}!'
+            print(self.hand_ranks)
+            print(f"You got a {self.hand_ranks[-1]}!")
 
     def check_ranks(self, cards=None):
         if cards is None:
