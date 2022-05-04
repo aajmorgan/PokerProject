@@ -42,8 +42,8 @@ def findProb(cards, ranks, straightFlush=0):
                 temp2 += nums.count(card) 
             prob += temp1 * temp2
             print(prob)
-        temp = 0 if num_cards == 6 else (denom - suits) / (denom) * (suits / (denom - 1))
-        prob += len(cardsThatWork) * ((suits/denom) + temp)
+        temp = 0 if num_cards == 6 else (denom - (len(cardsThatWork) * suits)) / (denom) * ((len(cardsThatWork) * suits) / (denom - 1))
+        prob += ((len(cardsThatWork) * suits)/denom) + temp
         
         return prob
 
