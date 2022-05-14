@@ -1,3 +1,6 @@
+# Installing Modules
+To start, you need to pip/pip3 install pygame and deck-of-cards (even though it needs to be imported as deck_of_cards).
+
 # PokerProject
 Randomness final project
 
