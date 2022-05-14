@@ -22,7 +22,7 @@ def findProb(cards, ranks, straightFlush=0):
         print("cardsthatwork", cardsThatWork)
         if num_cards == 5:
             for i in range(2, 14):
-                for j in range(i, 15):
+                for j in range(i + 1, 15):
                     if i not in cardsThatWork and j not in cardsThatWork:
                         cardsCopy = cards[:]
                         cardsCopy.append(i)
